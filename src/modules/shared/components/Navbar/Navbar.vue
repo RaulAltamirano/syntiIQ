@@ -63,7 +63,7 @@
               <span class="text-gray-900 font-semibold">{{ userName }}</span>
             </div>
             <button
-              @click="navigateTo('Home')"
+              @click="navigateTo('Profile')"
               class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
             >
               Mi Perfil
