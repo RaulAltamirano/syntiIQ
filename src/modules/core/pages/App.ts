@@ -1,5 +1,5 @@
-import { ref } from 'vue';
-import Navbar from '../../shared/components/Navbar/Navbar..vue';
+import { useRouter } from 'vue-router';
+import Navbar from '../../shared/components/Navbar/Navbar.vue';
 
 export default {
   name: 'App',
@@ -7,7 +7,12 @@ export default {
     Navbar,
   },
   setup() {
-    const title = ref('Mi Aplicación Vue');
-    return { title };
+    const router = useRouter();
+
+   const navigate = (name: string) => {
+      router.push({name: name});
+    };
+
+    return { navigate };
   },
 };
