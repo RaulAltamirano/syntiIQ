@@ -6,7 +6,7 @@
     :class="{'dark': isDark}"
     class="min-h-screen transition-colors duration-300"
   >
-    <div class="relative min-h-screen overflow-hidden">
+    <div class="relative min-h-screen overflow-hidden ">
       <!-- Light Mode Background -->
       <div 
         class="absolute inset-0 transition-all duration-500"
@@ -25,7 +25,7 @@
             </svg>
             
             <!-- Light Mode Ambient Effects -->
-            <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/5 rounded-full filter blur-3xl animate-float"></div>
+            <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary/500 rounded-full filter blur-3xl animate-float"></div>
             <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-success/5 rounded-full filter blur-3xl animate-float-delayed"></div>
             <div class="absolute top-1/3 right-1/3 w-80 h-80 bg-blue-400/5 rounded-full filter blur-3xl animate-float-slow"></div>
           </div>
@@ -39,7 +39,7 @@
       >
         <div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-gray-800 to-indigo-950">
           <div class="absolute inset-0">
-            <svg class="absolute inset-0 w-full h-full opacity-[0.07]" xmlns="http://www.w3.org/2000/svg">
+            <svg class="absolute inset-0 w-full h-full opacity-[0.09]" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <pattern id="dark-grid" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
                   <path d="M0 0h40v40H0V0z" fill="none"/>
@@ -50,9 +50,9 @@
             </svg>
 
             <!-- Dark Mode Ambient Effects -->
-            <div class="absolute top-0 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-float"></div>
-            <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/10 rounded-full filter blur-3xl animate-float-delayed"></div>
-            <div class="absolute top-1/3 right-1/3 w-80 h-80 bg-purple-500/10 rounded-full filter blur-3xl animate-float-slow"></div>
+            <div class="absolute top-0 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full filter blur-2xl animate-float"></div>
+            <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-indigo-500/10 rounded-full filter blur-2xl animate-float-delayed"></div>
+            <div class="absolute top-1/3 right-1/3 w-80 h-80 bg-pink-500/10 rounded-full filter blur-2xl animate-float-slow"></div>
           </div>
         </div>
       </div>
@@ -69,7 +69,7 @@
       </button>
 
       <!-- Main Content -->
-      <div class="relative flex min-h-screen flex-col items-center justify-center p-6">
+      <div class="relative flex min-h-screen flex-col items-center justify-center p-16">
         <!-- Title -->
         <h1 class="mb-12 text-4xl sm:text-5xl font-black text-center animate-title relative">
           <span class="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-indigo-600 dark:from-blue-300 dark:via-blue-400 dark:to-indigo-300">
@@ -134,52 +134,6 @@
 
 
 <style>
-.card {
-  cursor: pointer;
-  padding: 1.5rem;
-  border-radius: 1rem;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  transition: transform 0.3s, background-color 0.3s, box-shadow 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
-}
-
-.icon {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 4rem;
-  height: 4rem;
-  border-radius: 50%;
-  margin-bottom: 1rem;
-  font-size: 2rem;
-  color: white;
-  transition: background-color 0.3s, transform 0.3s;
-}
-
-.group:hover .icon {
-  transform: scale(1.1);
-}
-
-.title {
-  font-size: 1.25rem;
-  font-weight: 700;
-  text-align: center;
-  transition: color 0.3s;
-}
-
-.description {
-  font-size: 0.875rem;
-  text-align: center;
-  color: #4b5563;
-  margin-top: 0.5rem;
-}
 
 @keyframes blob {
   0%, 100% { transform: translate(0, 0) scale(1); }
