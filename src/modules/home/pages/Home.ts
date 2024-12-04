@@ -1,8 +1,12 @@
 import { defineComponent, ref } from 'vue';
 import { useRouter } from 'vue-router';
+import CardHome from '../components/CardHome.vue';
 
 export default defineComponent({
   name: "Home",
+  components: {
+    CardHome,
+  },
   setup() {
     const router = useRouter();
     const isDark = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
@@ -67,11 +71,10 @@ export default defineComponent({
     ];
     
     const handleCardClick = (name: any) => {
-      router.push({name: name.route});
+      console.log('Saludos');
+      router.push({name: name});
     };
-    const toggleTheme = () => {``
-      isDark.value = !isDark.value;
-    };
+    
 
     const getIconClass = (baseClass: any) => {
       const iconClasses = {
@@ -95,7 +98,6 @@ export default defineComponent({
       cards,
       handleCardClick,
       isLoading,
-      toggleTheme,
       getIconClass,
      };
   },
