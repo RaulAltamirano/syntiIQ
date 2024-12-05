@@ -63,15 +63,6 @@
         </RouterLink>
       </p>
     </div>
-
-    <NotificationModal
-        :is-open="isNotificationOpen"
-        :title="'¡Éxito!'"
-        :message="'La operación se completó correctamente'"
-        :type="'success'"
-        :duration="5000"
-        @close="closeNotification"
-      />
   </div>
 </template>
 
