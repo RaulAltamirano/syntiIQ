@@ -50,7 +50,9 @@
                  class="mt-1 w-full px-4 py-2.5 text-sm bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
         </div>
 
-        <button type="submit" 
+        <button 
+                :loading="isLoading"
+                type="submit" 
                 class="w-full py-2.5 px-4 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all">
           Iniciar Sesión
         </button>
