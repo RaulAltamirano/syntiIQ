@@ -1,154 +1,168 @@
-# SyntiIQ - Multi-Channel E-commerce Platform
+# SyntiIQ - Multi-Channel E-commerce Platform 🚀
 
-![SyntiIQ Logo][logo]
+![SyntiIQ Logo](src/assets/logo.svg)
 
-SyntiIQ is a comprehensive multi-channel e-commerce solution that combines inventory management, user authentication, role-based permissions, shipping management, and more into a single, powerful platform.
+> **🏗️ Project Status: Active Development**  
+> SyntiIQ is currently under intensive development. We're working hard to create the fastest and most efficient e-commerce solution with the help of our community! Join us in this exciting journey! 
 
-## 🚀 Features
+[![Status](https://img.shields.io/badge/Status-In_Development-yellow)](/)
+[![Vue.js](https://img.shields.io/badge/Vue.js-3.x-green)](/)
+[![Tailwind](https://img.shields.io/badge/Tailwind-CSS-blue)](/)
+[![Pinia](https://img.shields.io/badge/Pinia-Latest-orange)](/)
 
-### Core Functionality
-- **Multi-Channel Sales Management**
-  - Unified dashboard for all sales channels
-  - Real-time synchronization across platforms
-  - Integrated analytics and reporting
-
-- **Advanced Inventory Management**
-  - Real-time stock tracking
-  - Multi-warehouse support
-  - Automated restock alerts
-  - Batch inventory updates
-
-- **User Management & Security**
-  - Role-based access control (RBAC)
-  - Custom permission sets
-  - Audit logging
-  - Two-factor authentication
-
-- **Shipping & Logistics**
-  - Multiple carrier integration
-  - Automated shipping label generation
-  - Package tracking
-  - Delivery optimization
-
-## 🛠️ Tech Stack
-
-- **Frontend**
-  - Vue.js 3 with Composition API
-  - Pinia for state management
-  - Tailwind CSS for styling
-  - Vue Router for navigation
-
-- **Backend**
-  - Node.js with Express
-  - PostgreSQL database
-  - Redis for caching
-  - JWT authentication
-
-## 📦 Installation
-
-```bash
-# Clone the repository
-git clone https://github.com/your-username/syntiiq.git
-
-# Navigate to project directory
-cd syntiiq
-
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env
-
-# Run development server
-npm run dev
-```
-
-## 🔧 Configuration
-
-1. Create a `.env` file based on `.env.example`
-2. Configure your database settings
-3. Set up authentication keys
-4. Configure shipping provider credentials
-
-## 📚 Documentation
-
-Detailed documentation is available in the `/docs` directory:
-
-- [User Guide](docs/user-guide.md)
-- [API Documentation](docs/api.md)
-- [Development Guide](docs/development.md)
-- [Deployment Guide](docs/deployment.md)
-
-## 🧪 Testing
-
-```bash
-# Run unit tests
-npm run test:unit
-
-# Run e2e tests
-npm run test:e2e
-
-# Run all tests
-npm run test
-```
-
-## 📈 Project Structure
+## 📁 Project Structure by Module
 
 ```
 syntiiq/
-├── src/
-│   ├── assets/          # Static assets
-│   ├── components/      # Vue components
-│   ├── composables/     # Reusable composition functions
-│   ├── layouts/         # Page layouts
-│   ├── pages/          # Route pages
-│   ├── plugins/        # Vue plugins
-│   ├── stores/         # Pinia stores
-│   └── utils/          # Utility functions
-├── public/             # Public static files
-├── tests/              # Test files
-└── docs/              # Documentation
+├── 📂 src/
+│   ├── 🎨 assets/
+│   │   ├── logo.svg
+│   │   ├── icons/
+│   │   └── styles/
+│   │
+│   ├── 🏢 modules/
+│   │   ├── 🔐 auth/
+│   │   │   ├── components/
+│   │   │   ├── composables/
+│   │   │   ├── store/
+│   │   │   └── views/
+│   │   │
+│   │   ├── 📊 dashboard/
+│   │   │   ├── components/
+│   │   │   ├── composables/
+│   │   │   ├── store/
+│   │   │   └── views/
+│   │   │
+│   │   ├── 📦 inventory/
+│   │   │   ├── components/
+│   │   │   │   ├── ProductList.vue
+│   │   │   │   ├── StockManager.vue
+│   │   │   │   └── WarehouseSelect.vue
+│   │   │   ├── composables/
+│   │   │   │   ├── useInventory.js
+│   │   │   │   └── useStock.js
+│   │   │   ├── store/
+│   │   │   │   └── inventory.js
+│   │   │   └── views/
+│   │   │       ├── InventoryView.vue
+│   │   │       └── ProductDetail.vue
+│   │   │
+│   │   ├── 💰 sales/
+│   │   │   ├── components/
+│   │   │   ├── composables/
+│   │   │   ├── store/
+│   │   │   └── views/
+│   │   │
+│   │   └── 🚚 shipping/
+│   │       ├── components/
+│   │       ├── composables/
+│   │       ├── store/
+│   │       └── views/
+│   │
+│   ├── 🧩 shared/
+│   │   ├── components/
+│   │   │   ├── ui/
+│   │   │   ├── forms/
+│   │   │   └── tables/
+│   │   ├── composables/
+│   │   └── utils/
+│   │
+│   ├── 🛣️ router/
+│   │   └── index.js
+│   │
+│   ├── 📦 store/
+│   │   └── index.js
+│   │
+│   ├── 🎯 App.vue
+│   └── 🚀 main.js
+│
+├── 📂 public/
+├── 🧪 tests/
+└── 📚 docs/
 ```
 
-## 🤝 Contributing
+## ⚡ Tech Stack
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+- 🖥️ **Vue.js 3**
+  - Composition API
+  - Script Setup Syntax
+  - TypeScript Support
 
-## 📄 License
+- 🎨 **Tailwind CSS**
+  - Custom Design System
+  - Responsive Utilities
+  - Dark Mode Support
 
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+- 📦 **Pinia**
+  - Module-based Stores
+  - DevTools Integration
+  - Composition API Support
+
+- 🛣️ **Vue Router**
+  - Navigation Guards
+  - Route Meta Fields
+  - Dynamic Routing
+
+[Previous sections remain the same...]
+
+## 🚀 Quick Start
+
+```bash
+# Get the code
+git clone https://github.com/your-username/syntiiq.git
+
+# Install what we have so far
+cd syntiiq
+npm install
+
+# Start the development server
+npm run dev
+```
+
+## 🤝 Join Our Community!
+
+We're building something amazing and we need your help! Here's how you can contribute:
+
+- 🐛 Report bugs and issues
+- 💡 Suggest new features
+- 🛠️ Submit pull requests
+- 📚 Improve documentation
+- ⚡ Help optimize performance
+
+### Why Contribute?
+- 🌟 Be part of something big
+- 🚀 Help shape the future of e-commerce
+- 💪 Learn and grow with us
+- 🏆 Get recognized for your contributions
+
+## 🌟 Coming Soon
+
+- 📱 Mobile application
+- 🤖 AI-powered features
+- 📊 Advanced analytics
+- 🔄 More platform integrations
+- 📈 Performance optimizations
+
+## 💡 Performance Goals
+
+We're aiming to be the fastest in the market:
+- ⚡ Page load times < 1s
+- 🚀 API response times < 100ms
+- 💪 Handle 10k+ concurrent users
+- ⚡ Real-time inventory updates
+
+## 📞 Get In Touch
+
+- 💬 Join our [Discord](https://discord.gg/syntiiq)
+- 📧 Email: dev@syntiiq.com
+- 🐦 Twitter: [@SyntiIQ_Dev](https://twitter.com/SyntiIQ_Dev)
 
 ## 📸 Screenshots
 
-[Add your screenshots here with descriptions]
-
-Example format:
-```markdown
-### Dashboard
-![Dashboard Overview](screenshots/dashboard.png)
-*Main dashboard showing key metrics and activities*
-
-### Inventory Management
-![Inventory System](screenshots/inventory.png)
-*Inventory management interface with real-time stock levels*
-```
-
-## 🎯 Roadmap
-
-- [ ] Mobile application development
-- [ ] AI-powered inventory forecasting
-- [ ] Advanced analytics dashboard
-- [ ] Integration with additional e-commerce platforms
-- [ ] Enhanced reporting capabilities
-
-## 📞 Support
-
-For support, please email support@syntiiq.com or join our [Discord community](https://discord.gg/syntiiq).
+> 🏗️ Screenshots will be added as features are completed. We're working hard to have something visual to show soon!
 
 ---
 
 [logo]: path/to/your/logo.png "SyntiIQ Logo"
+
+*Join us in building the future of e-commerce! Together we can make SyntiIQ the fastest and most reliable e-commerce platform available.* 🚀
