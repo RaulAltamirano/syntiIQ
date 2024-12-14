@@ -1,14 +1,21 @@
 import { defineComponent, ref } from 'vue';
 import { useAuth } from '../../composables/useAuth';
 import { useRoute, useRouter } from 'vue-router';
+import { useThemeStore } from '../../../shared/composables/useTheme';
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import AvatarComponent from '../../components/AvatarComponent/AvatarComponent.vue';
 
 export default defineComponent({
   name: "Login",
   components:{
+    FontAwesomeIcon,
+    AvatarComponent,
   },
   setup() {
     const { login, isLoading } = useAuth()
     const router = useRouter();
+    const { isDark, toggleTheme } = useThemeStore()
+
 const route = useRoute();
     const email = ref()
     const password = ref()
@@ -36,6 +43,8 @@ const route = useRoute();
       loginWithGitHub,
       email,
       isLoading,
+      isDark,
+      toggleTheme,
       password,
     }
   },
