@@ -4,6 +4,7 @@ export default {
     "./index.html",        // Si usas Vite o archivos HTML en la raíz
     "./src/**/*.{vue,js,ts,jsx,tsx}", // Escanea todos los archivos Vue, JS, TS, JSX, y TSX en `src`
   ],
+  darkMode: 'class', 
   theme: {
     extend: {
       colors: {
