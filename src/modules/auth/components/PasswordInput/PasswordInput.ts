@@ -1,4 +1,4 @@
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 import { useMotion } from "@vueuse/motion";
 
@@ -22,96 +22,117 @@ export default defineComponent({
     const showPassword = ref(false);
     const inputRef = ref<HTMLInputElement | null>(null)
     const isInputFocused = ref(false)
-
+    const localValue = ref(props.modelValue || '')
 
     const { target: inputTarget } = useMotion(inputRef, {
-      initial: { scale: 1 },
-      enter: { scale: 1 },
-      focused: { scale: 1.02 },
+      initial: { scale: 1, borderWidth: '1px' },
+      hover: { scale: 1.002 },
+      focused: { 
+        scale: 1.004,
+        transition: {
+          type: 'spring',
+          stiffness: 300,
+          damping: 15
+        }
+      }
     })
     
-    
-    /**
-     * Calcula el puntaje de la fortaleza de la contraseña.
-     * @param password - La contraseña introducida.
-     */
-    const calculateStrength = (password: string): number => {
-      let score = 0;
-
-      if (password.length >= 8) score += 25;
-      if (/[A-Z]/.test(password)) score += 25;
-      if (/[a-z]/.test(password)) score += 25;
-      if (/[0-9]/.test(password)) score += 12.5;
-      if (/[^A-Za-z0-9]/.test(password)) score += 12.5;
-
-      return score;
-    };
-
-    // Fortaleza de la contraseña en porcentaje
-    const strengthPercentage = computed(() => calculateStrength(props.modelValue));
-
-    // Nivel de fortaleza basado en el puntaje
-    const strengthLevel = computed(() => {
-      const strength = strengthPercentage.value;
-      if (strength < 25) return "weak";
-      if (strength < 50) return "fair";
-      if (strength < 75) return "good";
-      return "strong";
-    });
-
-    // Texto descriptivo de la fortaleza
-    const strengthText = computed(() => {
-      const levels = {
-        weak: "Weak",
-        fair: "Fair",
-        good: "Good",
-        strong: "Strong",
-      };
-      return levels[strengthLevel.value];
-    });
     const strengthScore = computed(() => {
-      const password = props.modelValue
+      const password = localValue.value
       let score = 0
       
-      if (password.length >= 8) score++
+      if (password.length >= 12) score += 2
+      else if (password.length >= 8) score++
+    
       if (/[A-Z]/.test(password)) score++
       if (/[a-z]/.test(password)) score++
       if (/[0-9]/.test(password)) score++
       if (/[^A-Za-z0-9]/.test(password)) score++
       
-      return score
+      const varietyCount = (/[A-Z]/.test(password) ? 1 : 0) +
+                          (/[a-z]/.test(password) ? 1 : 0) +
+                          (/[0-9]/.test(password) ? 1 : 0) +
+                          (/[^A-Za-z0-9]/.test(password) ? 1 : 0)
+      if (varietyCount >= 3) score++
+      
+      return Math.min(score, 5)
     })
     
-
     const strengthConfig = computed(() => {
       const configs = {
-        0: { level: 'weak', text: 'Débil', color: 'bg-red-500', icon: 'lock' },
-        1: { level: 'weak', text: 'Débil', color: 'bg-red-500', icon: 'X' },
-        2: { level: 'fair', text: 'Regular', color: 'bg-yellow-500', icon: 'AlertTriangle' },
-        3: { level: 'good', text: 'Buena', color: 'bg-green-500', icon: 'Check' },
-        4: { level: 'strong', text: 'Fuerte', color: 'bg-emerald-600', icon: 'Check' },
-        5: { level: 'strong', text: 'Muy Fuerte', color: 'bg-emerald-600', icon: 'Check' }
+        0: { 
+          level: 'weak',
+          text: 'Very Weak',
+          color: 'bg-red-500',
+          icon: 'xmark',
+          gradient: 'from-red-500 to-red-600'
+        },
+        1: { 
+          level: 'weak',
+          text: 'Weak',
+          color: 'bg-red-500',
+          icon: 'xmark',
+          gradient: 'from-red-400 to-red-500'
+        },
+        2: { 
+          level: 'fair',
+          text: 'Fair',
+          color: 'bg-yellow-500',
+          icon: 'triangle-exclamation',
+          gradient: 'from-yellow-400 to-yellow-500'
+        },
+        3: { 
+          level: 'good',
+          text: 'Good',
+          color: 'bg-green-500',
+          icon: 'check',
+          gradient: 'from-green-400 to-green-500'
+        },
+        4: { 
+          level: 'strong',
+          text: 'Strong',
+          color: 'bg-emerald-600',
+          icon: 'shield-halved',
+          gradient: 'from-emerald-400 to-emerald-600'
+        },
+        5: { 
+          level: 'strong',
+          text: 'Very Strong',
+          color: 'bg-emerald-600',
+          icon: 'shield-halved',
+          gradient: 'from-emerald-500 to-emerald-700'
+        }
       }
       return configs[strengthScore.value]
     })
     
-    // Maneja el evento para actualizar el valor del modelo
-    const updateValue = (event: Event) => {
-      const target = event.target as HTMLInputElement;
-      emit("update:modelValue", target.value);
-    };
-
+    const strengthPercentage = computed(() => (strengthScore.value / 5) * 100)
+    
+    const handleInput = (event: Event) => {
+      const target = event.target as HTMLInputElement
+      const value = target.value
+      localValue.value = value
+      emit('update:modelValue', value)
+    }
+    
+    const handleFocus = () => {
+      isInputFocused.value = true
+    }
+    
+    const handleBlur = () => {
+      isInputFocused.value = false
+    }
     return {
       showPassword,
-      calculateStrength,
       strengthPercentage,
       strengthConfig,
-      strengthLevel,
       inputTarget,
-      strengthText,
+      localValue,
       isInputFocused,
       strengthScore,
-      updateValue,
+      handleInput,
+      handleFocus,
+      handleBlur,
     };
   },
 });
