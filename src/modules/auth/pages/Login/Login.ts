@@ -1,50 +1,47 @@
 import { defineComponent, ref } from 'vue';
-import { useAuth } from '../../composables/useAuth';
-import { useRoute, useRouter } from 'vue-router';
-import { useThemeStore } from '../../../shared/composables/useTheme';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import AvatarComponent from '../../components/AvatarComponent/AvatarComponent.vue';
+
+import { useAuth } from '../../composables/useAuth';
+import { useTheme } from '../../../shared/composables/useTheme';
+import SocialAuth from '../../components/SocialAuth/SocialAuth.vue';
+import PasswordInput from '../../components/PasswordInput/PasswordInput.vue';
 
 export default defineComponent({
   name: "Login",
-  components:{
+  components: {
     FontAwesomeIcon,
-    AvatarComponent,
+    SocialAuth,
+    PasswordInput,
   },
   setup() {
     const { login, isLoading } = useAuth()
-    const router = useRouter();
-    const { isDark, toggleTheme } = useThemeStore()
-
-const route = useRoute();
+    const { isDark } = useTheme();
     const email = ref()
-    const password = ref()
+    const password = ref('')
+    const isLogin = ref(true);
+    const loading = ref(false);
+    const rememberMe = ref(false);
 
-    const onLogin = async () => {
-      await login(email.value, password.value)
-    }
-    const loginWithGoogle = () => {
-      // Lógica para iniciar sesión con Google
-      console.log("Iniciar sesión con Google");
-    }
-    const loginWithGitHub = () => {
-      // Lógica para iniciar sesión con GitHub
-      console.log("Iniciar sesión con GitHub");
-    }
-    const afterLogin = () => {
-      const redirectPath = route.query.redirect as string;
-      router.push(redirectPath || { name: 'Dashboard' });
+    const handleSubmit = async () => {
+      loading.value = true;
+      try {
+        await login(email.value, password.value)        
+      } catch (error) {
+        console.error('Error:', error);
+      } finally {
+        loading.value = false;
+      }
     };
     
+
     return {
-      afterLogin,
-      onLogin,
-      loginWithGoogle,
-      loginWithGitHub,
+      handleSubmit,
+      isLogin,
+      loading,
+      rememberMe,
       email,
       isLoading,
       isDark,
-      toggleTheme,
       password,
     }
   },
