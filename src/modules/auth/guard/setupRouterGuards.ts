@@ -24,11 +24,9 @@ export const setupRouterGuards = (router: any) => {
         return next();
       }
       // 2. Verificar sesión si no está autenticado pero hay token en localStorage
-      console.log('verify session', authStore.isAuthenticated, tokenStorage.tokens);
       if (!authStore.isAuthenticated && tokenStorage.tokens?.value?.refreshToken) {
         if (!isVerifyingSession) {
           isVerifyingSession = true;
-          console.log('updated session');
           try {
             const userData = await tokenService.verifySession();
             authStore.setSession(userData, userData.tokens);
