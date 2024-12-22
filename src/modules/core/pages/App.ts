@@ -1,18 +1,13 @@
-import { useRouter } from 'vue-router';
 import Navbar from '../../shared/components/Navbar/Navbar.vue';
+import NotificationModal from '../../shared/components/NotificationModal/NotificationModal.vue';
 
 export default {
   name: 'App',
   components: {
     Navbar,
+    NotificationModal
   },
   setup() {
-    const router = useRouter();
-
-   const navigate = (name: string) => {
-      router.push({name: name});
-    };
-
-    return { navigate };
-  },
-};
+    return {};
+  }
+}
