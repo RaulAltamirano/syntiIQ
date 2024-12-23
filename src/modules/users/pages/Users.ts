@@ -1,149 +1,196 @@
-import { ref, computed, defineComponent } from 'vue'
+import { ref, computed, defineComponent, onMounted } from 'vue'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import { useThemeStore } from '../../shared/store/ThemeStore';
+import { storeToRefs } from 'pinia';
+import { useRouter } from 'vue-router';
+import TitleCard from '../../shared/components/TitleCard/TitleCard.vue';
 
 export default defineComponent({
-    name: "Users",
-    setup() {
+  name: "Users",
+  components: {
+    FontAwesomeIcon,
+    TitleCard
+  },
+  setup() {
+    const themeStore = useThemeStore()
+    const { isDark } = storeToRefs(themeStore)
+    const router = useRouter()
+    const mounted = ref(false)
+    const search = ref('')
+    const filterRole = ref('')
+    const currentPage = ref(1)
+    const itemsPerPage = 5
+    const showAddModal = ref(false)
 
-        const isDark = ref(false)
-        const searchQuery = ref('')
-        const roleFilter = ref('')
-        const statusFilter = ref('')
-        const currentPage = ref(1)
-        const itemsPerPage = 10
+    const filters = ref({
+      search: '',
+      role: '',
+      status: ''
+    })
+    
+    onMounted(() => {
+      mounted.value = true
+    })
+    const stats = [
+      { label: 'Total Users', value: '2,847', icon: 'users', color: 'text-blue-500' },
+      { label: 'Active Now', value: '147', icon: 'user-clock', color: 'text-green-500' },
+      { label: 'New Today', value: '24', icon: 'user-plus', color: 'text-purple-500' },
+      { label: 'Pending Approvals', value: '12', icon: 'user-shield', color: 'text-yellow-500' }
+    ]
 
+    const roles = [
+      { value: 'admin', label: 'Administrator' },
+      { value: 'moderator', label: 'Moderator' },
+      { value: 'editor', label: 'Editor' },
+      { value: 'user', label: 'User' }
+    ]
 
-        const users = ref([
-            {
-              id: 1,
-              name: 'Ana García',
-              email: 'ana.garcia@example.com',
-              role: 'admin',
-              status: 'active',
-              lastAccess: '2024-03-20T10:30:00'
-            },
-            // ... más usuarios
-          ])
-          
-          // Computed Properties
-          const filteredUsers = computed(() => {
-            let filtered = users.value
-          
-            if (searchQuery.value) {
-              filtered = filtered.filter(user => 
-                user.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-                user.email.toLowerCase().includes(searchQuery.value.toLowerCase())
-              )
-            }
-          
-            if (roleFilter.value) {
-              filtered = filtered.filter(user => user.role === roleFilter.value)
-            }
-          
-            if (statusFilter.value) {
-              filtered = filtered.filter(user => user.status === statusFilter.value)
-            }
-          
-            return filtered
-          })
-          
-          const totalUsers = computed(() => filteredUsers.value.length)
-          const totalPages = computed(() => Math.ceil(totalUsers.value / itemsPerPage))
-          const startIndex = computed(() => (currentPage.value - 1) * itemsPerPage)
-          const endIndex = computed(() => Math.min(startIndex.value + itemsPerPage, totalUsers.value))
-          
-          // Métodos
-          const toggleTheme = () => {
-            isDark.value = !isDark.value
-          }
-          
-          const getInitials = (name: string) => {
-            return name
-              .split(' ')
-              .map((word: any[]) => word[0])
-              .join('')
-              .toUpperCase()
-          }
-          
-          const getRoleClasses = (role: string | number) => {
-            const classes = {
-              admin: 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200',
-              user: 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200',
-              editor: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-            }
-            return classes[role] || ''
-          }
-          
-          const getStatusClasses = (status: string | number) => {
-            const classes = {
-              active: 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200',
-              inactive: 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-            }
-            return classes[status] || ''
-          }
-          
-          const formatDate = (date: string | number | Date) => {
-            return new Date(date).toLocaleDateString('es-ES', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit'
-            })
-          }
-          
-          const previousPage = () => {
-            if (currentPage.value > 1) {
-              currentPage.value--
-            }
-          }
-          
-          const nextPage = () => {
-            if (currentPage.value < totalPages.value) {
-              currentPage.value++
-            }
-          }
-          
-          // Métodos para acciones de usuario
-          const openNewUserModal = () => {
-            // Implementar lógica para abrir modal de nuevo usuario
-          }
-          
-          const editUser = (user: any) => {
-            // Implementar lógica para editar usuario
-          }
-          
-          const deleteUser = (user: any) => {
-            // Implementar lógica para eliminar usuario
-          }
-          
-          const openUserTools = (user: any) => {
-            // Implementar lógica para abrir herramientas avanzadas
-          }
-          
-        return {
-            isDark,
-            searchQuery,
-            roleFilter,
-            statusFilter,
-            currentPage,
-            itemsPerPage,
-            users,
-            filteredUsers,
-            totalUsers,
-            totalPages,
-            startIndex,
-            endIndex,
-            toggleTheme,
-            getInitials,
-            getRoleClasses,
-            getStatusClasses,
-            formatDate,
-            previousPage,
-            nextPage,
-            openNewUserModal,
-            editUser,
-            deleteUser,
-            openUserTools,
-        }
+    const roleColors = {
+      admin: 'bg-red-100 text-red-800',
+      moderator: 'bg-purple-100 text-purple-800',
+      editor: 'bg-yellow-100 text-yellow-800',
+      user: 'bg-blue-100 text-blue-800'
     }
+
+    const statusColors = {
+      online: 'bg-green-500',
+      offline: 'bg-gray-500',
+      idle: 'bg-yellow-500'
+    }
+
+
+
+    const filteredUsers = computed(() => {
+      return users.value.filter(user => {
+        const matchesSearch = user.name.toLowerCase().includes(filters.value.search.toLowerCase()) ||
+          user.email.toLowerCase().includes(filters.value.search.toLowerCase())
+        const matchesRole = !filters.value.role || user.role === filters.value.role
+        const matchesStatus = !filters.value.status || user.status === filters.value.status
+        return matchesSearch && matchesRole && matchesStatus
+      })
+    })
+
+    const paginatedUsers = computed(() => {
+      const start = (currentPage.value - 1) * itemsPerPage
+      const end = start + itemsPerPage
+      return filteredUsers.value.slice(start, end)
+    })
+
+    const totalPages = computed(() => Math.ceil(filteredUsers.value.length / itemsPerPage))
+    const paginationStart = computed(() => (currentPage.value - 1) * itemsPerPage)
+    const paginationEnd = computed(() => Math.min(currentPage.value * itemsPerPage, filteredUsers.value.length))
+
+    const toggleDarkMode = () => {
+      isDark.value = !isDark.value
+    }
+
+    const formatLastSeen = (date) => {
+      // return formatDistance(date, new Date(), { addSuffix: true })
+    }
+
+    const formatDate = (date) => {
+      // return format(date, 'MMM d, yyyy')
+    }
+    const viewDashboard = (user) => router.push({name: 'UserDashboard'})
+    const impersonateUser = (user) => console.log('Impersonate:', user.id)
+    const editUser = (user) => console.log('Edit:', user.id)
+    const showUserLogs = (user) => console.log('Show logs:', user.id)
+    const confirmDelete = (user) => console.log('Delete:', user.id)
+
+
+    const users = ref([
+      {
+        id: 1,
+        name: 'Juan Pérez',
+        email: 'juan@example.com',
+        role: 'admin',
+        status: 'online',
+        lastSeen: new Date(),
+        joinDate: new Date('2023-01-15'),
+        teamCount: 3,
+        projectCount: 8
+      },
+      {
+        id: 2,
+        name: 'Miguel Pavon',
+        email: 'miguel@example.com', // Corrected duplicate email
+        role: 'admin',
+        status: 'online',
+        lastSeen: new Date(),
+        joinDate: new Date('2023-01-15'),
+        teamCount: 3,
+        projectCount: 8
+      },
+      // Add 10 more users with random data
+      ...Array(10).fill().map((_, index) => ({
+        id: index + 3, // Start IDs from 3 to avoid conflicts
+        name: generateRandomName(),
+        email: generateRandomEmail(),
+        role: generateRandomRole(),
+        status: Math.random() < 0.5 ? 'online' : 'offline', // Randomize status
+        lastSeen: generateRandomLastSeenDate(),
+        joinDate: generateRandomJoinDate(),
+        teamCount: Math.floor(Math.random() * 10) + 1, // Random team count (1-10)
+        projectCount: Math.floor(Math.random() * 20) + 1, // Random project count (1-20)
+      })),
+    ]);
+    
+    function generateRandomName() {
+      const firstNames = ['Maria', 'Sofia', 'Camila', 'Isabella', 'Valentina', 'Santiago', 'Mateo', 'Emiliano', 'Sebastian', 'David'];
+      const lastNames = ['Lopez', 'Gonzalez', 'Hernandez', 'Garcia', 'Rodriguez'];
+      return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
+    }
+    
+    function generateRandomEmail()  {
+      const names = generateRandomName().split(' ').join('.');
+      return `${names}@example.com`; // Ensure unique emails
+    }
+    
+    function generateRandomRole() {
+      const roles = ['admin', 'editor', 'member'];
+      return roles[Math.floor(Math.random() * roles.length)];
+    }
+    
+    function generateRandomLastSeenDate() {
+      const daysAgo = Math.floor(Math.random() * 30); // Up to 30 days ago
+      return new Date(Date.now() - (daysAgo * 24 * 60 * 60 * 1000));
+    }
+    
+    function generateRandomJoinDate() {
+      const year = Math.floor(Math.random() * 2) + 2023; // 2023 or 2024
+      const month = Math.floor(Math.random() * 12);  // 0-11 (January-December)
+      const day = Math.floor(Math.random() * 31) + 1; // 1-31
+      return new Date(year, month, day);
+    }
+
+
+    return {
+      currentPage,
+      mounted,
+      search,
+      isDark,
+      router,
+      filterRole,
+      showAddModal,
+      roles,
+      filteredUsers,
+      viewDashboard,
+      impersonateUser,
+      showUserLogs,
+      paginatedUsers,
+      totalPages,
+      paginationStart,
+      paginationEnd,
+      toggleDarkMode,
+      filters,
+      
+      formatLastSeen,
+      stats,
+      formatDate,
+      editUser,
+      confirmDelete,
+      roleColors,
+      statusColors,
+    }
+  }
 })  
