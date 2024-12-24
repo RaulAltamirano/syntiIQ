@@ -5,7 +5,6 @@ import { API_CONSTANTS } from './constants/constants-api';
 import { ApiError } from './api-error';
 import { apiService } from './api-service';
 
-// Configuración del mock
 const mock = new MockAdapter(axios);
 
 describe('ApiService', () => {
@@ -14,7 +13,6 @@ describe('ApiService', () => {
   const fullUrl = `${API_CONSTANTS.BASE_URL}${endpoint}`;
 
   beforeEach(() => {
-    // Restablece los mocks antes de cada prueba
     mock.reset();
   });
 
