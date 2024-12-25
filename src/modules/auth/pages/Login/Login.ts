@@ -10,11 +10,11 @@ export default defineComponent({
   name: "Login",
   components: {
     FontAwesomeIcon,
-    SocialAuth,
     PasswordInput,
+    SocialAuth,
   },
   setup() {
-    const { login, isLoading } = useAuth()
+    const { login } = useAuth()
     const { isDark } = useTheme();
     const email = ref()
     const password = ref('')
@@ -23,16 +23,13 @@ export default defineComponent({
     const rememberMe = ref(false);
 
     const handleSubmit = async () => {
-      loading.value = true;
       try {
-        await login(email.value, password.value)        
+        await login(email.value, password.value)
       } catch (error) {
         console.error('Error:', error);
-      } finally {
-        loading.value = false;
       }
     };
-    
+
 
     return {
       handleSubmit,
@@ -40,7 +37,6 @@ export default defineComponent({
       loading,
       rememberMe,
       email,
-      isLoading,
       isDark,
       password,
     }
