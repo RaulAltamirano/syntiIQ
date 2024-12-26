@@ -1,6 +1,6 @@
 # SyntiIQ - Multi-Channel E-commerce Platform 🚀
 
-![SyntiIQ Logo](src/assets/logo.svg)
+![SyntiIQ Logo](src/assets/orig_1920x1080.png)
 
 > **🏗️ Project Status: Active Development**  
 > SyntiIQ is currently under intensive development. We're working hard to create the fastest and most efficient e-commerce solution with the help of our community! Join us in this exciting journey! 
