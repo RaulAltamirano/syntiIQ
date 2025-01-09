@@ -7,7 +7,7 @@ import { useAuthStore } from "../stores/authStore";
 import { apiService } from "../../services/api-service";
 
 export const useAuth = () => {
-  const { tokens } = useTokenStorage();
+  const { tokens, clearTokens, setTokens, } = useTokenStorage();
   const storeAuth = useAuthStore()
   const router = useRouter()
   const notify = useNotification();
@@ -37,7 +37,6 @@ export const useAuth = () => {
 
   const logout = (): void => {
     storeAuth.clearSession();
-    // notify.info('Logged out');
     window.location.href = '/login';
   };
 
@@ -47,6 +46,8 @@ export const useAuth = () => {
     isLoading,
     tokens,
     login,
+    clearTokens,
+    setTokens,
     logout,
   };
 };
