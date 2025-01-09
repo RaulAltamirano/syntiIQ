@@ -1,6 +1,7 @@
+import { ref } from "vue";
+
 import { jwtDecode } from "jwt-decode";
 import {  UserSession } from "../interfaces/auth.types";
-import { ref } from "vue";
 import { apiService } from "../../services/api-service";
 
 export const useTokenService = () => {
@@ -15,7 +16,6 @@ export const useTokenService = () => {
       return true;
     }
   };
-
 
   const verifySession = async () : Promise<UserSession>=> {
     try {
