@@ -7,10 +7,7 @@ import { apiService } from "../../services/api-service";
 
 export const useAuthStore = defineStore('auth', () => {
   const { clearTokens, setTokens, tokens } = useTokenStorage();
-  const user = ref<UserSession | null>({
-    // tokens: tokens.value
-  }
-  );
+  const user = ref<UserSession | null>();
 
   const isAuthenticated = computed(() => !!user.value?.tokens?.accessToken);
   const hasRole = (role: string) => user.value?.roles.includes(role) || false;
@@ -32,6 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
   return {
     user,
     isAuthenticated,
+    tokens,
     hasRole,
     hasPermission,
     setSession,
