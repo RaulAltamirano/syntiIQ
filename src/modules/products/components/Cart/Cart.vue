@@ -1,8 +1,7 @@
 <script  lang="ts" src="./Cart.ts"/>
 
-
 <template>
-    <div class="min-h-screen bg-gradient-to-br from-gray-100 to-blue-200 p-16">
+    <div class="min-h-screen  p-16">
       <div class="max-w-6xl mx-auto">
         <!-- Header Tabs -->
         <div class="bg-white rounded-lg shadow-md mb-6 p-4">
@@ -154,13 +153,21 @@
   
   
   <style scoped>
-  .fade-enter-active,
-  .fade-leave-active {
-    transition: opacity 0.3s ease;
+  .bounce-enter-active {
+    animation: bounce-in 0.5s;
   }
-  
-  .fade-enter-from,
-  .fade-leave-to {
-    opacity: 0;
+  .bounce-leave-active {
+    animation: bounce-in 0.5s reverse;
+  }
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
   </style>
