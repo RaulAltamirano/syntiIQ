@@ -1,7 +1,6 @@
 <script lang="ts" src="./Products.ts" />
 
 <template>
-  <div class="flex min-h-screen flex-col items-center justify-center bg-gradient-to-br from-gray-100 to-blue-200">
     <div class="p-16">
       
      <!-- Barra de Filtros, Búsqueda y Ordenamiento -->
@@ -48,7 +47,6 @@
       <QuickView :isOpen="isQuickViewOpen" :product="selectedProduct" @close="closeQuickView"
         @add-to-cart="handleAddToCart" />
     </div>
-  </div>
 </template>
 
 
