@@ -1,5 +1,5 @@
 import { onMounted, ref } from 'vue';
-import { useThemeStore } from '../../composables/useTheme';
+import { useThemeStore } from '../../store/ThemeStore';
 import { storeToRefs } from 'pinia';
 
 export default {
