@@ -2,33 +2,27 @@
 
 <template>
   <nav
+    class="fixed top-0 w-full z-50 transition-all duration-500 backdrop-blur-md"
     :class="[
-      'fixed top-0 w-full z-50 transition-all duration-500',
-      isScrolled 
-        ? isDark 
-          ? 'bg-gray-900/90 shadow-lg shadow-gray-900/20' 
-          : 'bg-white/90 shadow-lg shadow-black/5'
-        : isDark 
-          ? 'bg-gray-900/60' 
-          : 'bg-white/60',
-      'backdrop-blur-md'
+      navClasses,
+      { 'shadow-lg': isScrolled }
     ]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between h-16">
-        <!-- Logo Section with animation -->
         <RouterLink 
           :to="{ name: 'Home' }" 
           class="flex items-center space-x-3 group"
         >
-          <div class="relative w-8 h-8 animate-logo-float">
+          <div class="relative w-8 h-8 animate-logo-float ">
             <img 
-              :src="logo || '/path-to-your-logo.svg'" 
-              alt="SyntiIQ Logo" 
-              class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110" 
-            />
-            <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-600/20 blur-xl group-hover:opacity-100 opacity-0 transition-opacity duration-300"></div>
-          </div>
+  :src="logo || '/path-to-your-logo.svg'" 
+  alt="SyntiIQ Logo" 
+  class="w-full h-full object-contain transition-transform duration-300 group-hover:scale-110 dark:text-white"
+ />
+
+ <div class="absolute inset-0 bg-gradient-to-r from-primary/20 to-blue-600/20 blur-xl transition-opacity duration-300 group-hover:opacity-100 opacity-0"></div>
+</div>
           <span 
             :class="[
               'text-xl font-semibold transition-colors duration-300',
@@ -65,7 +59,6 @@
             </span>
           </button>
 
-          <!-- Cart with bounce animation -->
           <RouterLink 
             :to="{ name: 'Cart' }" 
             class="relative p-2 rounded-full transition-transform hover:scale-105"

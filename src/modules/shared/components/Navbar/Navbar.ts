@@ -3,7 +3,7 @@ import logo from '../../../../assets/logo.svg'
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useRouter } from 'vue-router';
-import { useThemeStore } from '../../composables/useTheme';
+import { useThemeStore } from '../../store/ThemeStore';
 import { storeToRefs } from 'pinia';
 
 
@@ -29,7 +29,6 @@ export default {
 
     // Methods
     const toggleDropdown = () => {
-      console.log(showDropdown.value);
       showDropdown.value = !showDropdown.value
     }
 
@@ -42,7 +41,7 @@ export default {
       closeDropdown()
     }
 
-    const onLogout = () => {
+    const onLogout = async () => {
       router.push({ name: 'Login' })
 
       // Implement logout logic
@@ -77,27 +76,32 @@ export default {
         danger: true
       }
     ])
+    const navClasses = computed(() => {
+      return {
+        'bg-white/90 shadow-black/5': !isDark.value && isScrolled.value,
+        'bg-white/60': !isDark.value && !isScrolled.value,
+        'bg-gray-900/90 shadow-gray-900/20': isDark.value && isScrolled.value,
+        'bg-gray-900/60': isDark.value && !isScrolled.value,
+      };
+    });
+    
     const changeTheme = () => {
       themeStore.toggleTheme()
-      console.log({ isDark });
     }
 
-    const fontTheme = computed(() => isDark ? 'moon' : 'sun')
-    const toggleThemeStyle = computed(() => isDark ? 'bg-primary' : 'bg-gray-200')
     return {
       logo,
       wishlistCount,
       cartCount,
       changeTheme,
-      toggleThemeStyle,
       toggleDropdown,
       hasNewNotifications,
       userName,
       closeDropdown,
-      fontTheme,
       notificationCount,
       onLogout,
       showDropdown,
+      navClasses,
       cartAnimation,
       wishlistAnimation,
       menuItems,
