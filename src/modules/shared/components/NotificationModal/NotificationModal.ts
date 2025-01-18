@@ -1,115 +1,70 @@
-import { computed, onUnmounted, ref, watch } from "vue";
+import { ref} from "vue";
+import { useNotification } from "../../composables/useNotification";
+import { NotificationPosition } from "../../interfaces/notification.interfaces";
+import { useThemeStore } from "../../store/ThemeStore";
+import { storeToRefs } from "pinia";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export default {
-	name: 'NotificationModal',
-	props: {
-		isOpen: {
-			type: Boolean,
-			required: true
-		},
-		title: {
-			type: String,
-			required: true
-		},
-		message: {
-			type: String,
-			required: true
-		},
-		type: {
-			type: String,
-			default: 'info',
-			validator: (value: string) => ['success', 'error', 'warning', 'info'].includes(value)
-		},
-		duration: {
-			type: Number,
-			default: 5000
-		},
-		position: {
-			type: String,
-			default: 'top-center',
-			validator: (value: string) => [
-				'top-right',
-				'top-left',
-				'bottom-right',
-				'bottom-left',
-				'top-center',
-				'bottom-center'
-			].includes(value)
-		}
-	
-
-	},
-	components: {
-	},
-	emits: ['close'],
-	setup(props, { emit }) {
+  name: 'NotificationModal',
+  components: {
+    FontAwesomeIcon
+  },
+  setup() {
     const notificationRef = ref(null)
-    const timer = ref(0)
+    const { notifications, remove } = useNotification();
+    const themeStore = useThemeStore()
+		const { isDark } = storeToRefs(themeStore)
 
-    const getTypeStyles = computed(() => {
-      const styles = {
-        success: 'bg-green-100 dark:bg-green-800 border-green-500',
-        error: 'bg-red-100 dark:bg-red-800 border-red-500',
-        warning: 'bg-yellow-100 dark:bg-yellow-800 border-yellow-500',
-        info: 'bg-blue-100 dark:bg-blue-800 border-blue-500'
-      }
-      return styles[props.type] || styles.info
-    })
+    // Estilo dinámico según el tipo
+    const getPositionStyles = (position: NotificationPosition) => {
+      return `notification-item ${positionMap[position]}`;
+    };
+    
+    const positionMap: Record<NotificationPosition, string> = {
+      'top-right': 'notification-top-right',
+      'top-left': 'notification-top-left',
+      'bottom-right': 'notification-bottom-right',
+      'bottom-left': 'notification-bottom-left',
+      'top-center': 'notification-top-center',
+      'bottom-center': 'notification-bottom-center'
+    };
+    
+    const getTypeStyles = (type: string) => ({
+      'bg-green-100 border-l-green-600 dark:bg-green-950 dark:border-l-green-400': type === 'success',
+      'bg-red-100 border-l-red-600 dark:bg-red-950 dark:border-l-red-400': type === 'error', 
+      'bg-amber-100 border-l-amber-600 dark:bg-amber-950 dark:border-l-amber-400': type === 'warning',
+      'bg-blue-100 border-l-blue-600 dark:bg-blue-950 dark:border-l-blue-400': type === 'info'
+    });
+  
+    const getIconColor = (type: string) => ({
+      'text-green-700 dark:text-green-400': type === 'success',
+      'text-red-700 dark:text-red-400': type === 'error',
+      'text-amber-700 dark:text-amber-400': type === 'warning', 
+      'text-blue-700 dark:text-blue-400': type === 'info'
+    });
+  
+    
+    
+    const getIcon = (type: string) => ({
+      success: 'check',
+      error: 'xmark',
+      warning: 'triangle-exclamation',
+      info: 'circle-info'
+    }[type]);
+    
+    
 
-    const getIconColor = computed(() => {
-      const colors = {
-        success: 'text-green-500 dark:text-green-300',
-        error: 'text-red-500 dark:text-red-300',
-        warning: 'text-yellow-500 dark:text-yellow-300',
-        info: 'text-blue-500 dark:text-blue-300'
-      }
-      return colors[props.type] || colors.info
-    })
-
-    const getInitialPosition = () => {
-      switch (props.position) {
-        case 'top-right':
-          return { top: '1rem', right: '1rem' }
-        case 'top-left':
-          return { top: '1rem', left: '1rem' }
-        case 'bottom-right':
-          return { bottom: '1rem', right: '1rem' }
-        case 'bottom-left':
-          return { bottom: '1rem', left: '1rem' }
-        case 'top-center':
-          return { top: '1rem', left: '50%', transform: 'translateX(-50%)' }
-        case 'bottom-center':
-          return { bottom: '1rem', left: '50%', transform: 'translateX(-50%)' }
-        default:
-          return { top: '1rem', right: '1rem' }
-      }
-    }
-
-    const handleClose = () => {
-      emit('close')
-    }
-
-    watch(() => props.isOpen, (newValue) => {
-      if (newValue && props.duration) {
-        if (timer.value) clearTimeout(timer.value)
-        timer.value = setTimeout(() => {
-          handleClose()
-        }, props.duration)
-      }
-    })
-
-    onUnmounted(() => {
-      if (timer.value) {
-        clearTimeout(timer.value)
-      }
-    })
 
     return {
       notificationRef,
       getTypeStyles,
+      notifications,
       getIconColor,
-      getInitialPosition,
-      handleClose
+      getPositionStyles,
+      isDark,
+      getIcon,
+      remove,
     }
   }
 };
