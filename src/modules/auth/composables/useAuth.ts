@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 import { useTokenStorage } from "../../services/composables/useTokenStorage";
-import { TokenPayload } from "../interfaces/auth.types";
+import { TokenPayload, UserSession } from "../interfaces/auth.types";
 import { useNotification } from "../../shared/composables/useNotification";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
@@ -17,12 +17,34 @@ export const useAuth = () => {
   const login = async (email: string, password: string): Promise<void> => {
     isLoading.value = true;
     try {
-      const response = await apiService.post<{ tokens: TokenPayload }>('/auth/login', {
+      const response = await apiService.post<UserSession>('/auth/login', {
         email,
         password,
       });
       if (!response.data || !response.data.tokens) {
         throw new Error('Invalid login response');
+      }
+      storeAuth.setSession(response.data, response.data.tokens);
+      router.push({
+        name: 'Home'
+      })
+    } catch (error) {
+      notify.error('Login failed: ' + error);
+    } finally {
+      isLoading.value = false;
+    }
+  };
+
+  const register = async (email: string, password: string, fullName: string): Promise<void> => {
+    isLoading.value = true;
+    try {
+      const response = await apiService.post<UserSession>('/auth/signup', {
+        email,
+        password,
+        fullName,
+      });
+      if (!response.data || !response.data.tokens) {
+        throw new Error('Invalid register response');
       }
       storeAuth.setSession(response.data, response.data.tokens);
       router.push({
@@ -45,6 +67,7 @@ export const useAuth = () => {
     isAuthenticated,
     isLoading,
     tokens,
+    register,
     login,
     clearTokens,
     setTokens,
