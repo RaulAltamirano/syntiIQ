@@ -8,9 +8,9 @@ import { apiService } from '@/modules/services/api-service';
 
 vi.mock('@/modules/services/composables/useTokenStorage', () => ({
   useTokenStorage: vi.fn(() => ({
-    clearTokens: vi.fn(), 
-    setTokens: vi.fn(),   
-    tokens: ref(null),    
+    clearTokens: vi.fn(),
+    setTokens: vi.fn(),
+    tokens: ref(null),
   })),
 }));
 
@@ -34,16 +34,16 @@ describe('useAuthStore', () => {
 
   beforeEach(() => {
     setActivePinia(createPinia());
-    authStore = useAuthStore();    
-  // Obtener referencia a los mocks
-  
-});
+    authStore = useAuthStore();
+    // Obtener referencia a los mocks
+
+  });
 
 
-afterEach(() => {
-  vi.clearAllMocks();
-});
-// const tokenStorageMock = useTokenStorage();
+  afterEach(() => {
+    vi.clearAllMocks();
+  });
+  // const tokenStorageMock = useTokenStorage();
 
   it('should initialize with correct default values', () => {
     expect(authStore.user).toBeUndefined();
@@ -53,16 +53,13 @@ afterEach(() => {
   describe('setSession', () => {
     it('should set the user session and tokens', () => {
       authStore.setSession(mockSession, mockTokens);
-    
+
       expect(authStore.user).toEqual(mockSession);
-      expect(apiService.setTokens).toHaveBeenCalledWith(
-        mockTokens.accessToken,
-        mockTokens.refreshToken
-      );
+      expect(apiService.setTokens).toHaveBeenCalledWith(mockTokens);
       // expect(tokenStorageMock.setTokens).toHaveBeenCalledWith(mockTokens);
       expect(authStore.isAuthenticated).toBe(true);
     });
-    
+
   });
 
   describe('clearSession', () => {
