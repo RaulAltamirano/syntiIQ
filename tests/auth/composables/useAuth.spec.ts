@@ -2,12 +2,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
 
+import { setActivePinia, createPinia } from 'pinia';
+
 import { useTokenStorage } from '@/modules/services/composables/useTokenStorage';
 import { useNotification } from '@/modules/shared/composables/useNotification';
 import { useAuthStore } from '@/modules/auth/stores/authStore';
 import { apiService } from '@/modules/services/api-service';
 import { useAuth } from '@/modules/auth/composables/useAuth';
-
 
 vi.mock('vue-router');
 vi.mock('@/modules/services/composables/useTokenStorage');
@@ -22,10 +23,25 @@ describe('useAuth', () => {
   const mockNotify = { error: vi.fn() };
   const mockStore = {
     setSession: vi.fn(),
-    clearSession: vi.fn()
+    clearSession: vi.fn(),
+    createSession: vi.fn(),
+    validateEmail: vi.fn(),
+    validatePassword: vi.fn(),
   };
 
+  const mockAuth = {
+    tokens: { accessToken: 'mock-token' },
+    response: { data: { tokens: mockTokens } },
+    credentials: {
+      email: 'test@example.com',
+      password: 'password123',
+      fullName: 'Test User'
+    }
+  };
+
+
   beforeEach(() => {
+    setActivePinia(createPinia())
     vi.clearAllMocks();
     (useTokenStorage as any).mockReturnValue({ tokens: ref(mockTokens) });
     (useRouter as any).mockReturnValue(mockRouter);
@@ -72,8 +88,8 @@ describe('useAuth', () => {
 
     it('should handle invalid login response', async () => {
       vi.spyOn(apiService, 'post').mockResolvedValue({
-          data: null,
-          status: 0
+        data: null,
+        status: 0
       });
       const { login, isLoading } = useAuth();
 
@@ -100,11 +116,30 @@ describe('useAuth', () => {
 
       const loginPromise = login(mockCredentials.email, mockCredentials.password);
       expect(isLoading.value).toBe(true);
-      
+
       await loginPromise;
       expect(isLoading.value).toBe(false);
     });
+
+
+    it('should validate email format before login attempt', async () => {
+      const { login } = useAuth();
+      const invalidEmail = 'invalid-email';
+
+      vi.spyOn(apiService, 'post').mockRejectedValueOnce(new Error('Invalid email format'));
+
+      await login(invalidEmail, 'password123');
+      expect(mockNotify.error).toHaveBeenCalledWith('Login failed: Error: Invalid email format');
+    });
+
+    it('should handle rate limiting', async () => {
+      vi.spyOn(apiService, 'post').mockRejectedValueOnce(new Error('Too many requests'));
+      const { login } = useAuth();
+      await login(mockCredentials.email, mockCredentials.password);
+      expect(mockNotify.error).toHaveBeenCalledWith('Login failed: Error: Too many requests');
+    });
   });
+
 
   describe('logout', () => {
     it('should clear session and redirect to login page', () => {
@@ -123,17 +158,60 @@ describe('useAuth', () => {
 
     it('should clear session even if redirect fails', () => {
       const originalLocation = window.location;
-    //   delete window.location;
-      window.location = { 
+      //   delete window.location;
+      window.location = {
         set href(url: string) { throw new Error('Navigation failed'); }
       } as Location;
 
       const { logout } = useAuth();
-      
+
       expect(() => logout()).toThrow('Navigation failed');
       expect(mockStore.clearSession).toHaveBeenCalled();
 
       window.location = originalLocation;
+    });
+  });
+
+
+  describe('register', () => {
+    const validUserData = {
+      email: 'test@example.com',
+      password: 'Valid123!',
+      fullName: 'Test User'
+    };
+
+    it('should register user successfully', async () => {
+      const mockResponse = {
+        data: {
+          user: validUserData,
+          tokens: { access: 'token', refresh: 'refresh' }
+        }
+      };
+      vi.spyOn(apiService, 'post').mockResolvedValue(mockResponse);
+
+      const { register, isLoading } = useAuth();
+      await register(validUserData);
+
+      expect(apiService.post).toHaveBeenCalledWith('/auth/signup', validUserData);
+      expect(mockStore.setSession).toHaveBeenCalledWith(mockResponse.data, mockResponse.data.tokens);
+      expect(mockRouter.push).toHaveBeenCalledWith({ name: 'Home' });
+      expect(isLoading.value).toBe(false);
+    });
+
+    it('should handle timeout errors', async () => {
+      const { register, isLoading } = useAuth();
+      vi.spyOn(apiService, 'post').mockRejectedValueOnce(new Error('Timeout'));
+
+      await expect(register(validUserData)).rejects.toThrow('Timeout');
+      expect(isLoading.value).toBe(false);
+    });
+
+    it('should handle network errors', async () => {
+      const { register, isLoading } = useAuth();
+      vi.spyOn(apiService, 'post').mockRejectedValueOnce(new Error('Network Error'));
+
+      await expect(register(validUserData)).rejects.toThrow('Network Error');
+      expect(isLoading.value).toBe(false);
     });
   });
 });
