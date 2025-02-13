@@ -1,29 +1,32 @@
-import { NavigationGuardNext, RouteLocationNormalized } from 'vue-router';
+import { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import { useTokenService } from '../composables/tokenService';
 import { useTokenStorage } from '../../services/composables/useTokenStorage';
 
-export const setupRouterGuards = (router: any) => {
+export const setupRouterGuards = (router: Router) => {
   let isVerifyingSession = false;
 
-  router.beforeEach(async (to: RouteLocationNormalized, from: RouteLocationNormalized, next: NavigationGuardNext) => {
+  router.beforeEach(async (
+    to: RouteLocationNormalized,
+    from: RouteLocationNormalized,
+    next: NavigationGuardNext
+  ) => {
     const authStore = useAuthStore();
     const tokenStorage = useTokenStorage();
     const tokenService = useTokenService();
+
+    // Verificar si la ruta requiere autenticación
     const requiresAuth = to.matched.some((record) => record.meta.requiresAuth);
     const requiredRoles = to.meta.roles as string[] | undefined;
-    
+
     try {
-      // 1. Rutas públicas
       if (!requiresAuth) {
-        // Si el usuario está autenticado y accede a una ruta de autenticación, redirigir al Home o Dashboard
         if (authStore.isAuthenticated && to.path.startsWith('/auth')) {
-          console.log('Validacion');
           return next({ name: 'Home' });
         }
         return next();
       }
-      // 2. Verificar sesión si no está autenticado pero hay token en localStorage
+
       if (!authStore.isAuthenticated && tokenStorage.tokens?.value?.refreshToken) {
         if (!isVerifyingSession) {
           isVerifyingSession = true;
@@ -34,7 +37,10 @@ export const setupRouterGuards = (router: any) => {
             console.error('Error al verificar sesión:', error);
             authStore.clearSession();
             isVerifyingSession = false;
-            return next({ name: 'Login' });
+            return next({ 
+              name: 'Login',
+              query: { redirect: to.fullPath }
+            });
           }
           isVerifyingSession = false;
         } else {
@@ -42,16 +48,14 @@ export const setupRouterGuards = (router: any) => {
         }
       }
 
-      // // 3. Verificar autenticación
-      // if (!authStore.isAuthenticated) {
-      //   console.warn('Usuario no autenticado, redirigiendo a login.');
-      //   return next({
-      //     name: 'Login',
-      //     query: { redirect: to.fullPath },
-      //   });
-      // }
+      if (!authStore.isAuthenticated) {
+        console.warn('Usuario no autenticado, redirigiendo a login.');
+        return next({
+          name: 'Login',
+          query: { redirect: to.fullPath }
+        });
+      }
 
-      // // 5. Validar roles (opcional)
       // if (requiredRoles?.length) {
       //   const hasRequiredRole = requiredRoles.some((role) => authStore.hasRole(role));
       //   if (!hasRequiredRole) {
@@ -59,13 +63,41 @@ export const setupRouterGuards = (router: any) => {
       //   }
       // }
 
-      // 6. Continuar con la navegación
+      // // 5. Validar estado del token
+      // try {
+      //   await tokenService.validateAccessToken();
+      // } catch (error) {
+      //   console.warn('Token inválido o expirado, intentando refresh...');
+      //   try {
+      //     await tokenService.refreshAccessToken();
+      //   } catch (refreshError) {
+      //     console.error('Error al refrescar el token:', refreshError);
+      //     authStore.clearSession();
+      //     return next({ 
+      //       name: 'Login',
+      //       query: { redirect: to.fullPath }
+      //     });
+      //   }
+      // }
+
+      // 6. Permitir la navegación
       return next();
+
     } catch (error) {
       console.error('Error en la protección de rutas:', error);
       authStore.clearSession();
-      return next({ name: 'Login' });
+      return next({ 
+        name: 'Login',
+        query: { redirect: to.fullPath }
+      });
     }
   });
 
+  // Guardia después de cada navegación
+  router.afterEach((to) => {
+    // Resetear el flag de verificación si estábamos en la página de loading
+    if (to.name !== 'Loading') {
+      isVerifyingSession = false;
+    }
+  });
 };
