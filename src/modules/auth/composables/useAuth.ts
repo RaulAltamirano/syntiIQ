@@ -1,6 +1,6 @@
 import { computed, ref } from "vue";
 import { useTokenStorage } from "../../services/composables/useTokenStorage";
-import { TokenPayload, UserSession } from "../interfaces/auth.types";
+import { UserSession } from "../interfaces/auth.types";
 import { useNotification } from "../../shared/composables/useNotification";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
@@ -35,21 +35,21 @@ export const useAuth = () => {
     }
   };
 
-  const register = async (email: string, password: string, fullName: string): Promise<void> => {
+  const register = async (userData: { email: string, password: string, fullName: string }): Promise<void> => {
     isLoading.value = true;
     try {
       const response = await apiService.post<UserSession>('/auth/signup', {
-        email,
-        password,
-        fullName,
+        email: userData.email,
+        password: userData.password,
+        fullName: userData.fullName,
       });
+
       if (!response.data || !response.data.tokens) {
         throw new Error('Invalid register response');
       }
+
       storeAuth.setSession(response.data, response.data.tokens);
-      router.push({
-        name: 'Home'
-      })
+      router.push({ name: 'Home' });
     } catch (error) {
       notify.error('Login failed: ' + error);
     } finally {
@@ -57,9 +57,29 @@ export const useAuth = () => {
     }
   };
 
-  const logout = (): void => {
-    storeAuth.clearSession();
-    window.location.href = '/login';
+
+  const logout = async (): Promise<void> => {
+    try {
+      isLoading.value = true
+
+      const response = await apiService.get<any>('/auth/logout');
+      if (response.status !== 200 || !response.data) {
+        throw new Error('Logout operation failed');
+      }
+      storeAuth.clearSession();
+
+      await router.push({ name: 'Login' });
+
+    } catch (error) {
+      const errorMessage = error instanceof Error
+        ? error.message
+        : 'An unexpected error occurred during logout';
+
+      notify.error(errorMessage);
+      throw error;
+    } finally {
+      isLoading.value = false
+    }
   };
 
 
