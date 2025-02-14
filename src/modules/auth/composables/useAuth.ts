@@ -42,6 +42,7 @@ export const useAuth = () => {
         email: userData.email,
         password: userData.password,
         fullName: userData.fullName,
+        profileType: 'default'
       });
 
       if (!response.data || !response.data.tokens) {
