@@ -1,4 +1,4 @@
-<script lang="ts" src="./Register.ts"/>
+<script lang="ts" src="./Register.ts" />
 
 <template>
   <div class=" flex items-center justify-center">
@@ -23,41 +23,28 @@
       </div>
 
       <!-- Form -->
-      <form @submit.prevent="handleSubmit">
+      <form @submit.prevent="singup">
         <div class="mb-4">
-    <input
-      v-model="name"
-      type="text"
-      required
-      placeholder="Full name"
-      class="w-full py-2.5 px-3 border border-[#e5e7eb] dark:border-[#4b5563] rounded-lg text-sm transition-all duration-200 
+          <input v-model="name" type="text" required placeholder="Full name" class="w-full py-2.5 px-3 border border-[#e5e7eb] dark:border-[#4b5563] rounded-lg text-sm transition-all duration-200 
     text-gray-900 dark:text-gray-100
     placeholder:text-gray-500 dark:placeholder:text-gray-400
     bg-white dark:bg-[#374151]
-    focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6] focus:ring-opacity-10"    >
-  </div>
-  <div class="mb-4">
-    <input
-      v-model="email"
-      type="email"
-      required
-      placeholder="Email address"
-      class="w-full py-2.5 px-3 border border-[#e5e7eb] dark:border-[#4b5563] rounded-lg text-sm transition-all duration-200 
+    focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6] focus:ring-opacity-10">
+        </div>
+        <div class="mb-4">
+          <input v-model="email" type="email" required placeholder="Email address" class="w-full py-2.5 px-3 border border-[#e5e7eb] dark:border-[#4b5563] rounded-lg text-sm transition-all duration-200 
     text-gray-900 dark:text-gray-100
     placeholder:text-gray-500 dark:placeholder:text-gray-400
     bg-white dark:bg-[#374151]
-    focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6] focus:ring-opacity-10"    >
-  </div>
+    focus:outline-none focus:border-[#3b82f6] focus:ring-2 focus:ring-[#3b82f6] focus:ring-opacity-10">
+        </div>
 
         <div class="mb-4">
           <PasswordInput v-model="password" :show-strength="true" />
         </div>
 
-        <button 
-          type="submit" 
-          :disabled="loading"
-          class="w-full py-2.5 px-3 bg-[#3b82f6] hover:bg-[#2563eb] text-white rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
-        >
+        <button type="submit" :disabled="loading"
+          class="w-full py-2.5 px-3 bg-[#3b82f6] hover:bg-[#2563eb] text-white rounded-lg text-sm font-medium transition-all duration-200 disabled:opacity-70 disabled:cursor-not-allowed">
           <span v-if="!loading">Sign up</span>
           <FontAwesomeIcon v-else icon="spinner" class="animate-spin" />
         </button>
@@ -66,10 +53,7 @@
       <!-- Footer -->
       <p class="text-center mt-4 text-[#374151] dark:text-[#e5e7eb] text-sm">
         Already have an account?
-        <RouterLink 
-          to="/auth/login"
-          class="text-[#3b82f6] font-medium ml-1 hover:underline"
-        >
+        <RouterLink to="/auth/login" class="text-[#3b82f6] font-medium ml-1 hover:underline">
           Sign in
         </RouterLink>
       </p>
