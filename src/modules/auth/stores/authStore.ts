@@ -16,7 +16,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   const setSession = (session: UserSession, tokens: TokenPayload): void => {
     user.value = session;
-    apiService.setTokens(tokens.accessToken, tokens.refreshToken);
+    apiService.setTokens({
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken
+    });
     setTokens(tokens)
   };
 
