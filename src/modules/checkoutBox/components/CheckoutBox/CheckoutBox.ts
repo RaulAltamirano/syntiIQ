@@ -1,284 +1,211 @@
-import { defineComponent, ref } from "vue";
+import { computed, defineComponent, ref } from "vue";
 import SearchProduct from "../SearchProduct/SearchProduct.vue";
+import { useTheme } from "@/modules/shared/composables/useTheme";
+import SalesView from "../../page/SalesView/SalesView.vue";
 
 export default defineComponent({
-    name: "CheckoutBox",
-    components: {
-        SearchProduct
-    },
-    setup() {
-        let cartItems = [
-            {
-                id: 1,
-                name: "Producto A",
-                description: "Descripción breve del producto A",
-                price: 29.99,
-                image: "https://via.placeholder.com/64",
-            },
-            {
-                id: 2,
-                name: "Producto B",
-                description: "Descripción breve del producto B",
-                price: 45.99,
-                image: "https://via.placeholder.com/64",
-            },
-            {
-                id: 3,
-                name: "Producto B",
-                description: "Descripción breve del producto B",
-                price: 45.99,
-                image: "https://via.placeholder.com/64",
-            },
-            {
-                id: 4,
-                name: "Producto B",
-                description: "Descripción breve del producto B",
-                price: 45.99,
-                image: "https://via.placeholder.com/64",
-            },
-        ]
-        const products = ref([
-            {
-              id: 1,
-              name: "Producto A",
-              characteristics: "Color rojo, tamaño grande",
-              price: 25.99,
-              image: "https://via.placeholder.com/150",
-            },
-            {
-              id: 2,
-              name: "Producto B",
-              characteristics: "Color azul, tamaño pequeño",
-              price: 19.99,
-              image: "https://via.placeholder.com/150",
-            },
-            {
-              id: 3,
-              name: "Producto A",
-              characteristics: "Color verde, tamaño mediano",
-              price: 29.99,
-              image: "https://via.placeholder.com/150",
-            },
-          ]);
-      
-        const discount = ref()
-        const barcodeInput = ref()
-        const productQuery = ref()
-        const pendingTickets = ref([]);
-        const isVisible = ref(true)
+  name: "CheckoutBox",
+  components: {
+    SearchProduct,
+    SalesView,
+  },
+  setup() {
 
-        const handleRemoveItem = (itemId: number) => {
-            cartItems = cartItems.filter((item) => item.id !== itemId);
-        }
-        const handleCheckout = () => {
-            alert("Procediendo al pago");
-        }
+    // State
+    const { isDark } = useTheme()
+    const showPriceChecker = ref(false)
+    const carts = ref([{ items: [], discount: 0 }])
+    const currentCartIndex = ref(0)
+    const openingBalance = ref(0)
+    const closingBalance = ref(0)
+    const returnOrderId = ref('')
+    const taxRate = ref(10)
 
-        const total = () => {
-            return cartItems.reduce((sum, item) => sum + item.price, 0);
-        }
+    // // Animation
+    // const pageTransition = useMotion({
+    //   initial: { opacity: 0, y: 20 },
+    //   enter: { opacity: 1, y: 0 },
+    //   leave: { opacity: 0, y: -20 }
+    // })
+    const currentCart = computed(() => carts.value[currentCartIndex.value])
+    const currentCartTotal = computed(() => {
+      const items = currentCart.value.items
+      const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+      const tax = subtotal * (taxRate.value / 100)
+      const discount = currentCart.value.discount || 0
+      return {
+        subtotal,
+        tax,
+        total: subtotal + tax - discount
+      }
+    })
+    const menuItems = [
+      { id: 'sales', label: 'Sales', icon: 'cash-register' },
+      { id: 'returns', label: 'Returns', icon: 'undo' },
+      { id: 'register', label: 'Cash Register', icon: 'money-bill' },
+      { id: 'credits', label: 'Customer Credits', icon: 'credit-card' },
+      { id: 'history', label: 'Sales History', icon: 'history' },
+      { id: 'inventory', label: 'Inventory', icon: 'boxes' },
+    ]
 
-        const removeItem = (id?: number) => {
-            console.log('removeItem');
-        }
-        const searchProduct = () => {
-            console.log('searchProduct');
-        }
-        const viewInventory = () => {
-            console.log('viewInventory');
-        }
-        const viewCredits = () => {
-            console.log('viewCredits');
-        }
-        const proceedToCheckout = () => {
-            console.log('proceedToCheckout');
-        }
-        const applyDiscount = () => {
-            console.log('apply');
-        }
+    // Stats data
+    const stats = [
+      { id: 1, label: 'Today\'s Sales', value: '$1,234.56', icon: 'chart-line', color: 'text-green-500' },
+      { id: 2, label: 'Items Sold', value: '45', icon: 'shopping-cart', color: 'text-blue-500' },
+      { id: 3, label: 'Returns', value: '2', icon: 'undo', color: 'text-red-500' },
+      { id: 4, label: 'Active Credits', value: '$567.89', icon: 'credit-card', color: 'text-purple-500' },
+    ]
+    const products = ref([
+      { id: 1, name: 'Producto 1', price: 19.99, stock: 100, sku: 'SKU001', description: 'Descripción del producto 1' },
+      { id: 2, name: 'Producto 2', price: 29.99, stock: 150, sku: 'SKU002', description: 'Descripción del producto 2' },
+      // ... más productos
+    ])
 
-        const addProductByBarcode =()=>{
-            console.log('addProductByBarcode');
-        }
-        const handleProductSelected=()=>{
-            console.log('handleProductSelected');
-        }
+    // Computed values
+    const cartSubtotal = computed(() => {
+      return currentCart.value.reduce((total, item) => total + (item.price * item.quantity), 0)
+    })
 
+    const cartTax = computed(() => {
+      return (cartSubtotal.value * taxRate.value) / 100
+    })
 
-        const handleReturn = ()=>{
-            console.log('handleReturn');
-        }
-        const handleEntry = ()=>{
-            console.log('handleEntry');
-        }
-        const handleExit = ()=>{
-            console.log('handleExit');
-        }
-        const viewHistory = ()=>{
-            console.log('viewHistory');
-        }
-        const closeCashRegister = ()=>{
-            console.log('closeCashRegister');
-        }
-        const tools = ref([
-            {
-              id: 'returns',
-              label: 'Devoluciones',
-              icon: 'undo-alt',
-              bgColor: 'bg-red-500',
-              hoverColor: 'hover:bg-red-600',
-              gradientColors: ['#f87171', '#ef4444'],
-              showRipple: false,
-              rippleX: 0,
-              rippleY: 0
-            },
-            {
-              id: 'entries',
-              label: 'Entradas',
-              icon: 'arrow-circle-down',
-              bgColor: 'bg-green-600',
-              hoverColor: 'hover:bg-green-700',
-              gradientColors: ['#34d399', '#059669'],
-              showRipple: false,
-              rippleX: 0,
-              rippleY: 0
-            },
-            {
-              id: 'exits',
-              label: 'Salidas',
-              icon: 'arrow-circle-up',
-              bgColor: 'bg-yellow-500',
-              hoverColor: 'hover:bg-yellow-600',
-              gradientColors: ['#fbbf24', '#d97706'],
-              showRipple: false,
-              rippleX: 0,
-              rippleY: 0
-            },
-            {
-              id: 'history',
-              icon: 'history',
-              label: 'Historial',
-              bgColor: 'bg-gray-700',
-              hoverColor: 'hover:bg-gray-800',
-              gradientColors: ['#4b5563', '#1f2937'],
-              showRipple: false,
-              rippleX: 0,
-              rippleY: 0
-            },
-            {
-              id: 'cash',
-              label: 'Cierre de Caja',
-              icon: 'cash-register',
-              bgColor: 'bg-purple-600',
-              hoverColor: 'hover:bg-purple-700',
-              gradientColors: ['#8b5cf6', '#6d28d9'],
-              showRipple: false,
-              rippleX: 0,
-              rippleY: 0
-            },
-            {
-              id: 'credits',
-              label: 'Créditos',
-              icon: 'credit-card',
-              bgColor: 'bg-blue-600',
-              hoverColor: 'hover:bg-blue-700',
-              gradientColors: ['#3b82f6', '#2563eb'],
-              showRipple: false,
-              rippleX: 0,
-              rippleY: 0
-            }
-          ])
-          
-          
-          // Stagger Animation Functions
-          const beforeEnter = (el) => {
-            el.style.opacity = 0
-            el.style.transform = 'translateY(100px)'
-          }
-          
-          const enter = (el, done) => {
-            const delay = el.dataset.index * 100
-            setTimeout(() => {
-              el.style.transition = 'all 0.3s ease-out'
-              el.style.opacity = 1
-              el.style.transform = 'translateY(0)'
-              done()
-            }, delay)
-          }
-          
-          const leave = (el, done) => {
-            const delay = el.dataset.index * 100
-            setTimeout(() => {
-              el.style.transition = 'all 0.3s ease-in'
-              el.style.opacity = 0
-              el.style.transform = 'translateY(-100px)'
-              done()
-            }, delay)
-          }
-          
-          // Handle Tool Click with Ripple Effect
-          const handleToolClick = (tool) => {
-            // Add ripple effect
-            tool.showRipple = true
-            tool.rippleX = event.offsetX
-            tool.rippleY = event.offsetY
-          
-            // Handle tool-specific logic
-            switch (tool.id) {
-              case 'returns':
-                console.log('Handling returns...')
-                break
-              case 'entries':
-                console.log('Handling entries...')
-                break
-              // Add other cases as needed
-            }
-          }
+    const cartTotal = computed(() => {
+      return cartSubtotal.value + cartTax.value
+    })
 
-        const saveTicket = () => {
-            if (cartItems.value.length > 0) {
-              pendingTickets.value.push({ id: Date.now(), items: [...cartItems.value] });
-              cartItems.value = []; // Vaciar el carrito después de guardar
-            }
-          };
-      
-          const loadTicket = (ticket) => {
-            cartItems.value = [...ticket.items];
-            pendingTickets.value = pendingTickets.value.filter((t) => t.id !== ticket.id);
-          };
-      
+    //  Methods
 
-        return {
-            total,
-            cartItems,
-            handleRemoveItem,
-            handleCheckout,
-            discount,
-            addProductByBarcode,
-            removeItem,
-            productQuery,
-            searchProduct,
-            tools,
-            beforeEnter,        
-            enter,
-            leave,
-            handleToolClick,
-            handleProductSelected,
-            barcodeInput,
-            handleReturn,
-            handleEntry,
-            handleExit,
-            viewHistory,
-            closeCashRegister,
-            isVisible,
-            viewInventory,
-            saveTicket,
-            loadTicket,
-            viewCredits,
-            proceedToCheckout,
-            pendingTickets,
-            applyDiscount,
-            products
-        }
+    const processPayment = async () => {
+      // Implement payment processing logic
     }
+
+    const startShift = async () => {
+      // Implement shift start logic
+    }
+
+    const endShift = async () => {
+      // Implement shift end logic
+    }
+
+    const searchOrder = async () => {
+      // Implement order search logic
+    }
+    const showReturnsModal = async () => {
+      console.log('showReturnsModal');
+    }
+    const showCreditsModal = async () => {
+      console.log('showCreditsModal');
+    }
+    const addProductByBarcode = () => {
+      console.log('addProductByBarcode');
+    }
+    const openScanner = () => {
+      console.log('openScanner');
+    }
+
+    const toggleDarkMode = () => {
+      themeStore.toggleTheme()
+    }
+
+    const togglePriceChecker = () => {
+      showPriceChecker.value = !showPriceChecker.value
+    }
+
+    const showProductPrice = (product) => {
+      selectedProduct.value = product
+    }
+
+    const addNewCart = () => {
+      carts.value.push({ items: [], discount: 0 })
+      currentCartIndex.value = carts.value.length - 1
+    }
+
+    const switchCart = (index) => {
+      currentCartIndex.value = index
+    }
+
+    const handleProductSelected = (product) => {
+      const existingItem = currentCart.value.items.find(item => item.id === product.id)
+      if (existingItem) {
+        existingItem.quantity++
+      } else {
+        currentCart.value.items.push({
+          ...product,
+          quantity: 1
+        })
+      }
+    }
+
+    const increaseQuantity = (item) => {
+      item.quantity++
+    }
+
+    const decreaseQuantity = (item) => {
+      if (item.quantity > 1) {
+        item.quantity--
+      } else {
+        removeItem(item)
+      }
+    }
+
+    const removeItem = (item) => {
+      const index = currentCart.value.items.findIndex(i => i.id === item.id)
+      if (index > -1) {
+        currentCart.value.items.splice(index, 1)
+      }
+    }
+
+    const applyDiscount = (item) => {
+      // Implementar lógica de descuento
+    }
+
+    const holdCart = () => {
+      // Implementar lógica para pausar venta
+    }
+
+    const showPaymentOptions = () => {
+      // Implementar modal de opciones de pago
+    }
+
+    function logout() {
+      console.log('logout');
+    }
+    return {
+      logout,
+      menuItems,
+      stats,
+      applyDiscount,
+      holdCart,
+      showPaymentOptions,
+      openScanner,
+      currentCartTotal,
+      handleProductSelected,
+      increaseQuantity,
+      showReturnsModal,
+      showCreditsModal,
+      decreaseQuantity,
+      addProductByBarcode,
+      removeItem,
+      processPayment,
+      startShift,
+      endShift,
+      // pageTransition,
+      searchOrder,
+      isDark,
+      currentView,
+      currentCart,
+      openingBalance,
+      closingBalance,
+      returnOrderId,
+      carts,
+      taxRate,
+      cartSubtotal,
+      cartTax,
+      products,
+      cartTotal,
+      showPriceChecker,
+      currentCartIndex,
+    }
+  }
 });
