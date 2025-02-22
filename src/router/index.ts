@@ -8,6 +8,8 @@ import NotFoundRoute from '../modules/shared/components/NotFoundRoute/NotFoundRo
 import NotPermissionRoute from '../modules/shared/components/NotPermissionRoute/NotPermissionRoute.vue';
 import LoadingView from '../modules/shared/pages/LoadingView/LoadingView.vue';
 import { setupRouterGuards } from '../modules/auth/guard/setupRouterGuards';
+import { userRoutes } from '../modules/users/router/userRoutes';
+import { checkoutBoxRoutes } from '@/modules/checkoutBox/router/checkoutBoxRoutes';
 
 const errorNotFoundRoute: RouteRecordRaw = {
   path: '/:catchAll(.*)*',
@@ -31,13 +33,14 @@ const routes: RouteRecordRaw[] = [
   },
   ...authRoutes,
   ...mainRoutes,
+  ...userRoutes,
+  ...checkoutBoxRoutes,
   LoadingViewRoute,
   errorNotFoundRoute,
   errorNotPermissionRoute,
 
 ];
 
-// Router instance
 const router = createRouter({
   history: createWebHistory(),
   routes,
