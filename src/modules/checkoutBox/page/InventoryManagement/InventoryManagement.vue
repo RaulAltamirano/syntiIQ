@@ -227,7 +227,9 @@
               </div>
             </td>
             <td class="py-3 px-4">
-              <span class="px-2 py-1 text-xs font-medium rounded-full">
+              <span class="px-2 py-1 text-xs font-medium rounded-full"
+                :class="getCategoryClass(product.category)"
+                >
                 {{ product.category }}
               </span>
             </td>
@@ -354,7 +356,7 @@
       </div>
       
       <!-- Paginación -->
-      <div v-if="filteredProducts.length > itemsPerPage" class="flex justify-between items-center mt-6">
+      <div class="flex justify-between items-center mt-6">
         <button 
           @click="prevPage" 
           :disabled="currentPage === 1"
