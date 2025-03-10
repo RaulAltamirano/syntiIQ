@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { useRouter } from 'vue-router';
 import { useThemeStore } from '../../store/ThemeStore';
 import { storeToRefs } from 'pinia';
+import { useAuth } from '../../../auth/composables/useAuth';
 
 
 export default {
@@ -15,6 +16,7 @@ export default {
   setup() {
     const themeStore = useThemeStore()
     const { isDark } = storeToRefs(themeStore)
+    const { logout } = useAuth()
     const router = useRouter()
     const wishlistCount = ref(1)
     const cartCount = ref(1)
@@ -42,9 +44,8 @@ export default {
     }
 
     const onLogout = async () => {
-      router.push({ name: 'Login' })
-
-      // Implement logout logic
+      logout()
+      // router.push({ name: 'Login' })
       closeDropdown()
     }
 
@@ -84,7 +85,7 @@ export default {
         'bg-gray-900/60': isDark.value && !isScrolled.value,
       };
     });
-    
+
     const changeTheme = () => {
       themeStore.toggleTheme()
     }
