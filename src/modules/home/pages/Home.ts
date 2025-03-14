@@ -1,6 +1,8 @@
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import CardHome from '../components/CardHome.vue';
+import { useMotion } from '@vueuse/motion';
+import { useTheme } from '@/modules/shared/composables/useTheme';
 
 export default defineComponent({
   name: "Home",
@@ -9,15 +11,16 @@ export default defineComponent({
   },
   setup() {
     const router = useRouter();
-    const isDark = ref(window.matchMedia('(prefers-color-scheme: dark)').matches);
+    const { isDark } = useTheme()
     const isLoading = ref(false);
-    const cards  = [
+    const titleMotion = ref(null)
+    const cards = [
       {
         title: 'Caja',
         description: 'Administra tus ventas y flujo de caja de manera eficiente.',
         icon: 'cash-register',
         iconBg: 'bg-blue-500',
-        route: 'CheckoutBox'
+        route: 'cashier-sales'
       },
       {
         title: 'Usuarios',
@@ -69,12 +72,12 @@ export default defineComponent({
         route: '/configuraciones'
       }
     ];
-    
+
     const handleCardClick = (name: any) => {
       console.log('Saludos');
-      router.push({name: name});
+      router.push({ name: name });
     };
-    
+
 
     const getIconClass = (baseClass: any) => {
       const iconClasses = {
@@ -86,19 +89,33 @@ export default defineComponent({
         'bg-orange-500': 'bg-gradient-to-br from-orange-500 to-orange-600 dark:from-orange-400 dark:to-orange-500',
         'bg-gray-500': 'bg-gradient-to-br from-gray-500 to-gray-600 dark:from-gray-400 dark:to-gray-500'
       };
-      
+
       return iconClasses[baseClass] || baseClass;
     };
-    
-    
-    
 
-    return { 
+
+    onMounted(() => {
+      useMotion(titleMotion, {
+        initial: {
+          opacity: 0,
+          y: -20
+        },
+        enter: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: 600
+          }
+        }
+      })
+    })
+
+    return {
       isDark,
       cards,
       handleCardClick,
       isLoading,
       getIconClass,
-     };
+    };
   },
 });
