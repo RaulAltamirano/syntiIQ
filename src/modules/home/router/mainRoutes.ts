@@ -34,24 +34,9 @@ const mainRoutes: RouteRecordRaw[] = [
         component: () => import(/* webpackChunkName: "products-module" */ '../../products/pages/Products/Products.vue'),
       },
       {
-        path: '/checkout-box',
-        name: 'CheckoutBox',
-        component: () => import(/* webpackChunkName: "checkout-module" */ '../../checkoutBox/components/CheckoutBox/CheckoutBox.vue'),
-      },
-      {
         path: '/profile',
         name: 'Profile',
         component: () => import(/* webpackChunkName: "profile-module" */ '../../profile/page/Profile/Profile.vue'),
-      },
-      {
-        path: '/users',
-        name: 'Users',
-        component: () => import(/* webpackChunkName: "profile-module" */ '../../users/pages/Users.vue'),
-      },
-      {
-        path: '/users/dashboard',
-        name: 'UserDashboard',
-        component: () => import(/* webpackChunkName: "profile-module" */ '../../users/pages/UserDashboard/UserDashboard.vue'),
       },
     ],
   },
