@@ -3,5 +3,5 @@ export const ENDPOINTS = {
   TEST_AUTH: '/test-endpoint-auth',
   USERS: '/users',
   LOGIN: '/auth/login',
-  REFRESH_TOKEN: '/auth/refresh',
+  REFRESH_TOKEN: '/auth/refresh-token',
 };
