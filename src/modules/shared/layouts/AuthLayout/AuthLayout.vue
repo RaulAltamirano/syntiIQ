@@ -25,8 +25,7 @@
       <ToggleThemeButton />
     </div>
 
-     <!-- Waves SVG con posición fija -->
-     <div class="fixed bottom-0 left-0 right-0 w-full pointer-events-none select-none">
+    <div class="fixed bottom-0 left-0 right-0 w-full pointer-events-none select-none">
       <svg 
         class="w-full h-32 transform transition-transform duration-1000 hover:scale-105"
         xmlns="http://www.w3.org/2000/svg" 
