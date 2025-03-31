@@ -21,10 +21,11 @@ export const useAuth = () => {
         email,
         password,
       });
-      if (!response.data || !response.data.tokens) {
+      console.log({response});
+      if (!response.data || !response.data.user) {
         throw new Error('Invalid login response');
       }
-      storeAuth.setSession(response.data, response.data.tokens);
+      storeAuth.setSession(response.data.user, response.data.user.tokens);
       router.push({
         name: 'Home'
       })
