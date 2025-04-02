@@ -37,6 +37,13 @@ export default defineComponent({
         route: 'Products'
       },
       {
+        title: 'Store',
+        description: 'Organiza y controla tus stores.',
+        icon: 'box-open',
+        iconBg: 'bg-brown-500',
+        route: 'Store'
+      },
+      {
         title: 'Inventarios',
         description: 'Revisa y actualiza el stock de tus inventarios.',
         icon: 'warehouse',
