@@ -32,7 +32,7 @@ export const setupRouterGuards = (router: Router) => {
           isVerifyingSession = true;
           try {
             const userData = await tokenService.verifySession();
-            authStore.setSession(userData, userData.tokens);
+            authStore.setSession(userData, userData.user.tokens);
           } catch (error) {
             console.error('Error al verificar sesión:', error);
             authStore.clearSession();
