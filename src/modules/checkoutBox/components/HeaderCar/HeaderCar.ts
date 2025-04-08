@@ -1,206 +1,177 @@
 import { useTheme } from "@/modules/shared/composables/useTheme";
-import { ref, nextTick, onMounted } from "vue";
+import { ref, nextTick, onMounted, computed } from "vue";
+import SearchProduct from "../SearchProduct/SearchProduct.vue";
+import { useCartCashierStore } from "../../stores/useCartStoreCashier";
+import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
 
 export default {
-    name: ' App',
+    name: 'HeaderCar',
     components: {
-        // ComponentName
+        SearchProduct,
+        FontAwesomeIcon,
     },
     setup() {
-        const carts = ref([
-            { id: Number(), name: 'Carrito 1', itemCount: 0, isEditing: false, showDropdown: false }
-        ]);
-        const { isDark } = useTheme()
-        const currentCartIndex = ref(0);
-        const isPriceCheckerActive = ref(false);
-        const editInput = ref(null);
+        const isDark = useTheme()
+        const cartStore = useCartCashierStore();
 
-        // Genera un icono basado en el índice del carrito
+        // Refs
+        const editInput = ref<HTMLInputElement | null>(null);
+        const draggedItem = ref<number | null>(null);
+        const dragOverItem = ref<number | null>(null);
+
+        // Computed
+        const carts = computed(() => cartStore.carts);
+        const currentCartIndex = computed(() => cartStore.currentCartIndex);
+        const isPriceCheckerActive = computed(() => cartStore.isPriceCheckerActive);
+        const showPriceChecker = computed(() => cartStore.showPriceChecker);
+        const selectedProduct = computed(() => cartStore.selectedProduct);
+
+        // Métodos para drag-and-drop nativo
+        const onDragStart = (e: DragEvent, index: number) => {
+            if (e.dataTransfer) {
+                e.dataTransfer.effectAllowed = 'move';
+                // Almacenar el índice del elemento arrastrado
+                draggedItem.value = index;
+
+                // Añadir clase para estilo visual de arrastre
+                const target = e.target as HTMLElement;
+                setTimeout(() => {
+                    target.classList.add('dragging');
+                }, 0);
+
+                // Configurar accesibilidad
+                target.setAttribute('aria-grabbed', 'true');
+            }
+        };
+
+        const onDragOver = (e: DragEvent, index: number) => {
+            e.preventDefault();
+            dragOverItem.value = index;
+
+            // Indicador visual para el área de destino
+            const cartElements = document.querySelectorAll('.cart-item');
+            cartElements.forEach((el, i) => {
+                if (i === index) {
+                    el.classList.add('drag-over');
+                } else {
+                    el.classList.remove('drag-over');
+                }
+            });
+        };
+
+        const onDragEnd = (e: DragEvent) => {
+            // Limpiar estilos
+            const target = e.target as HTMLElement;
+            target.classList.remove('dragging');
+            target.setAttribute('aria-grabbed', 'false');
+
+            // Limpiar indicadores de área de destino
+            const cartElements = document.querySelectorAll('.cart-item');
+            cartElements.forEach(el => {
+                el.classList.remove('drag-over');
+            });
+        };
+
+        const onDrop = (e: DragEvent) => {
+            e.preventDefault();
+
+            // Mover el elemento si se ha definido origen y destino
+            if (draggedItem.value !== null && dragOverItem.value !== null && draggedItem.value !== dragOverItem.value) {
+                cartStore.moveCart(draggedItem.value, dragOverItem.value);
+            }
+
+            // Resetear variables
+            draggedItem.value = null;
+            dragOverItem.value = null;
+
+            // Limpiar los indicadores visuales
+            const cartElements = document.querySelectorAll('.cart-item');
+            cartElements.forEach(el => {
+                el.classList.remove('drag-over');
+            });
+        };
+
+        // Métodos para gestión de carritos
         const getCartIcon = (index: number) => {
-            const icons = ['shopping-cart', 'cart-shopping', 'basket-shopping', 'cart-plus', 'shopping-bag'];
-            return icons[index % icons.length];
+            // Iconos para los primeros carritos
+            const icons = ['shopping-cart', 'shopping-bag', 'store', 'gift'];
+            if (index < icons.length) {
+                return icons[index];
+            }
+
+            // Icono por defecto para el resto
+            return 'shopping-basket';
         };
 
-        const addNewCart = () => {
-            const newIndex = carts.value.length + 1;
-            carts.value.push({
-                id: uuidv4(),
-                name: `Carrito ${newIndex}`,
-                itemCount: 0,
-                isEditing: false,
-                showDropdown: false
-            });
-            saveCartsToLocalStorage();
-        };
-
-        const switchCart = (index: string | number) => {
-            currentCartIndex.value = index;
-            // Cierra todos los dropdowns al cambiar de carrito
-            carts.value.forEach(cart => cart.showDropdown = false);
-            localStorage.setItem('currentCartIndex', index);
-        };
-
-        const togglePriceChecker = () => {
-            isPriceCheckerActive.value = !isPriceCheckerActive.value;
-        };
-
-        const toggleDropdown = (index: number) => {
-            // Cierra todos los otros dropdowns
-            carts.value.forEach((cart, i) => {
-                if (i !== index) cart.showDropdown = false;
-            });
-            carts.value[index].showDropdown = !carts.value[index].showDropdown;
-        };
-
-        const startEditing = (index: number) => {
-            carts.value[index].isEditing = true;
-            carts.value.forEach((cart, i) => {
-                if (i !== index) {
-                    cart.isEditing = false;
-                    cart.showDropdown = false;
-                }
-            });
-
-            // Enfoca el input en el siguiente ciclo de renderizado
-            nextTick(() => {
-                if (editInput.value) {
-                    editInput.value.focus();
-                }
-            });
+        const startEditing = async (index: number) => {
+            cartStore.startEditing(index);
+            await nextTick();
+            if (editInput.value) {
+                editInput.value.focus();
+                editInput.value.select();
+            }
         };
 
         const finishEditing = (index: number) => {
-            const cart = carts.value[index];
-            cart.isEditing = false;
-
-            // Si el nombre está vacío, establece un nombre predeterminado
-            if (!cart.name.trim()) {
-                cart.name = `Carrito ${index + 1}`;
-            }
-
-            saveCartsToLocalStorage();
+            cartStore.finishEditing(index);
         };
 
-        const duplicateCart = (index: number) => {
-            const original = carts.value[index];
-            const clone = {
-                ...JSON.parse(JSON.stringify(original)),
-                id: uuidv4(),
-                name: `${original.name} (copia)`,
-                isEditing: false,
-                showDropdown: false
-            };
-
-            carts.value.splice(index + 1, 0, clone);
-            toggleDropdown(index); // Cierra el dropdown
-            saveCartsToLocalStorage();
-        };
-
-        const clearCart = (index: string | number) => {
-            if (confirm('¿Estás seguro que deseas vaciar este carrito?')) {
-                carts.value[index].itemCount = 0;
-                // Aquí puedes emitir un evento para informar que el carrito ha sido vaciado
-                toggleDropdown(index); // Cierra el dropdown
-                saveCartsToLocalStorage();
-            }
-        };
-
-        const removeCart = (index: number) => {
-            if (carts.value.length <= 1) {
-                alert('Debes mantener al menos un carrito');
-                return;
-            }
-
-            if (confirm('¿Estás seguro que deseas eliminar este carrito?')) {
-                carts.value.splice(index, 1);
-
-                // Ajusta el índice actual si es necesario
-                if (currentCartIndex.value >= carts.value.length) {
-                    currentCartIndex.value = carts.value.length - 1;
-                }
-
-                saveCartsToLocalStorage();
-            }
-        };
-
-        const shareCart = () => {
-            const currentCart = carts.value[currentCartIndex.value];
-            // Aquí implementarías la funcionalidad para compartir - por ejemplo generando un enlace
-            alert(`Compartiendo "${currentCart.name}" - Esta funcionalidad está en desarrollo`);
-        };
-
-        const saveCarts = () => {
-            saveCartsToLocalStorage();
-        };
-
-        const saveCartsToLocalStorage = () => {
-            try {
-                localStorage.setItem('carts', JSON.stringify(carts.value));
-                localStorage.setItem('currentCartIndex', currentCartIndex.value);
-            } catch (e) {
-                console.error('Error al guardar carritos en localStorage:', e);
-            }
-        };
-
-        const loadCartsFromLocalStorage = () => {
-            try {
-                const savedCarts = localStorage.getItem('carts');
-                const savedIndex = localStorage.getItem('currentCartIndex');
-
-                if (savedCarts) {
-                    carts.value = JSON.parse(savedCarts);
-                    // Asegúrate de que todos los carritos tienen los campos necesarios
-                    carts.value.forEach(cart => {
-                        if (!cart.id) cart.id = uuidv4();
-                        if (cart.isEditing === undefined) cart.isEditing = false;
-                        if (cart.showDropdown === undefined) cart.showDropdown = false;
-                        if (cart.itemCount === undefined) cart.itemCount = 0;
-                    });
-                }
-
-                if (savedIndex !== null) {
-                    currentCartIndex.value = parseInt(savedIndex);
-                }
-            } catch (e) {
-                console.error('Error al cargar carritos desde localStorage:', e);
-            }
-        };
-
-        // Carga los carritos al montar el componente
+        // Inicialización
         onMounted(() => {
-            loadCartsFromLocalStorage();
+            cartStore.loadCarts();
 
-            // Cierra los dropdowns cuando se hace clic fuera
-            document.addEventListener('click', (event) => {
-                const target = event.target;
-                const isDropdownOrButton = target.closest('.relative');
+            // Cerrar dropdowns al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                const clickedOutside = !e.target ||
+                    !(e.target as HTMLElement).closest('.cart-dropdown-trigger') &&
+                    !(e.target as HTMLElement).closest('.cart-dropdown-menu');
 
-                if (!isDropdownOrButton) {
-                    carts.value.forEach(cart => {
-                        cart.showDropdown = false;
-                    });
+                if (clickedOutside) {
+                    cartStore.closeAllDropdowns();
                 }
             });
         });
 
+        const getCartItemClasses= (index)=> {
+            const isActive = currentCartIndex === index;
+            return isActive
+              ? isDark
+                ? 'bg-blue-700 text-gray-100 shadow-md shadow-blue-900/40'
+                : 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+              : isDark
+                ? 'bg-gray-800 hover:bg-gray-750 text-gray-300 hover:text-gray-200 shadow shadow-gray-900/20'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 shadow shadow-gray-300/30';
+          }
+          const getInputClasses= ()=> {
+            return isDark
+              ? 'bg-gray-800 border-gray-700 focus:border-blue-600 focus:ring-blue-700/30 text-white'
+              : 'bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/30 text-gray-800';
+          }
+        
+          const handleRightClick= (index)=> {
+            cartStore.toggleDropdown(index)
+        }
         return {
+            cartStore,
+            editInput,
+            draggedItem,
+            dragOverItem,
             carts,
             currentCartIndex,
             isPriceCheckerActive,
-            editInput,
+            showPriceChecker,
+            selectedProduct,
+            onDragStart,
+            getCartItemClasses,
+            getInputClasses,
+            onDragOver,
+            onDragEnd,
+            isDark,
+            onDrop,
             getCartIcon,
-            addNewCart,
-            switchCart,
-            togglePriceChecker,
-            toggleDropdown,
             startEditing,
             finishEditing,
-            duplicateCart,
-            isDark,
-            clearCart,
-            removeCart,
-            shareCart,
-            saveCarts
+            handleRightClick,
         };
     }
 }
