@@ -25,7 +25,7 @@ export const useAuth = () => {
       if (!response.data || !response.data.user) {
         throw new Error('Invalid login response');
       }
-      storeAuth.setSession(response.data.user, response.data.user.tokens);
+      storeAuth.setSession(response.data.user, response.data.tokens);
       router.push({
         name: 'Home'
       })
