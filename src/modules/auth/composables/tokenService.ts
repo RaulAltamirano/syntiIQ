@@ -2,7 +2,7 @@ import { ref } from "vue";
 
 import { jwtDecode } from "jwt-decode";
 import {  UserSession } from "../interfaces/auth.types";
-import { apiService } from "../../services/api-service";
+import { ApiService } from "@/modules/services/api-service";
 
 export const useTokenService = () => {
   const isLoading = ref(false);
@@ -20,7 +20,7 @@ export const useTokenService = () => {
   const verifySession = async () : Promise<UserSession>=> {
     try {
       isLoading.value = true;
-      const response = await apiService.get<UserSession>('/auth/me');
+      const response = await apiService.api.get<UserSession>('/auth/me');
       return response.data;
     } catch (error) {
       throw error;
