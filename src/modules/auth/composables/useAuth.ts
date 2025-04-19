@@ -1,13 +1,14 @@
 import { computed, ref } from "vue";
-import { useTokenStorage } from "../../services/composables/useTokenStorage";
 import { UserSession } from "../interfaces/auth.types";
 import { useNotification } from "../../shared/composables/useNotification";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "../stores/authStore";
-import { apiService } from "../../services/api-service";
+import { ApiService } from "@/modules/services/api-service";
+
+const apiService = ApiService.getInstance();
+
 
 export const useAuth = () => {
-  const { tokens, clearTokens, setTokens, } = useTokenStorage();
   const storeAuth = useAuthStore()
   const router = useRouter()
   const notify = useNotification();
@@ -17,7 +18,7 @@ export const useAuth = () => {
   const login = async (email: string, password: string): Promise<void> => {
     isLoading.value = true;
     try {
-      const response = await apiService.post<UserSession>('/auth/login', {
+      const response = await apiService.api.post<UserSession>('/auth/login', {
         email,
         password,
       });
@@ -39,7 +40,7 @@ export const useAuth = () => {
   const register = async (userData: { email: string, password: string, fullName: string }): Promise<void> => {
     isLoading.value = true;
     try {
-      const response = await apiService.post<UserSession>('/auth/signup', {
+      const response = await apiService.api.post<UserSession>('/auth/signup', {
         email: userData.email,
         password: userData.password,
         fullName: userData.fullName,
@@ -64,7 +65,7 @@ export const useAuth = () => {
     try {
       isLoading.value = true
 
-      const response = await apiService.get<any>('/auth/logout');
+      const response = await apiService.api.post<any>('/auth/logout');
       if (response.status !== 200 || !response.data) {
         throw new Error('Logout operation failed');
       }
@@ -88,11 +89,8 @@ export const useAuth = () => {
   return {
     isAuthenticated,
     isLoading,
-    tokens,
     register,
     login,
-    clearTokens,
-    setTokens,
     logout,
   };
 };
