@@ -1,7 +1,6 @@
 import { NavigationGuardNext, RouteLocationNormalized, Router } from 'vue-router';
 import { useAuthStore } from '../stores/authStore';
 import { useTokenService } from '../composables/tokenService';
-import { useTokenStorage } from '../../services/composables/useTokenStorage';
 
 export const setupRouterGuards = (router: Router) => {
   let isVerifyingSession = false;
@@ -12,7 +11,6 @@ export const setupRouterGuards = (router: Router) => {
     next: NavigationGuardNext
   ) => {
     const authStore = useAuthStore();
-    const tokenStorage = useTokenStorage();
     const tokenService = useTokenService();
 
     // Verificar si la ruta requiere autenticación
@@ -27,15 +25,14 @@ export const setupRouterGuards = (router: Router) => {
         return next();
       }
 
-      if (!authStore.isAuthenticated && tokenStorage.tokens?.value?.refreshToken) {
+      if (!authStore.isAuthenticated) {
         if (!isVerifyingSession) {
           isVerifyingSession = true;
           try {
             const userData = await tokenService.verifySession();
-            authStore.setSession(userData, userData.user.tokens);
+            console.log({userData});
           } catch (error) {
             console.error('Error al verificar sesión:', error);
-            authStore.clearSession();
             isVerifyingSession = false;
             return next({ 
               name: 'Login',
@@ -85,7 +82,7 @@ export const setupRouterGuards = (router: Router) => {
 
     } catch (error) {
       console.error('Error en la protección de rutas:', error);
-      authStore.clearSession();
+      // authStore.clearSession();
       return next({ 
         name: 'Login',
         query: { redirect: to.fullPath }
