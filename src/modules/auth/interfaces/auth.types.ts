@@ -1,18 +1,28 @@
 export interface UserSession {
-  user: {
-    id: string;
-    email: string;
-    roles: string[];
-    isActive: boolean;
-    permissions?: string[];
-    tokens: TokenPayload
-  }
+  user: User
+  tokens: Tokens
 }
 
-export interface TokenPayload {
-  accessToken: string;
-  refreshToken: string;
+export interface User {
+  id: string
+  email: string
 }
+
+export interface Tokens {
+  token: Token
+  refreshToken: RefreshToken
+}
+
+export interface Token {
+  token: string
+  expiresIn: string
+}
+
+export interface RefreshToken {
+  token: string
+  expiresIn: string
+}
+
 export interface AuthError extends Error {
   code: string;
   status?: number;
