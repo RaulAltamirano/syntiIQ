@@ -14,12 +14,11 @@ export default defineComponent({
     SocialAuth,
   },
   setup() {
-    const { login } = useAuth()
+    const { login, isLoading } = useAuth()
     const { isDark } = useTheme();
     const email = ref()
     const password = ref('')
     const isLogin = ref(true);
-    const loading = ref(false);
     const rememberMe = ref(false);
 
     const handleSubmit = async () => {
@@ -34,7 +33,7 @@ export default defineComponent({
     return {
       handleSubmit,
       isLogin,
-      loading,
+      isLoading,
       rememberMe,
       email,
       isDark,
