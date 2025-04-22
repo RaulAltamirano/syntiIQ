@@ -9,6 +9,7 @@ import App from './modules/core/pages/App.vue'
 import router from './router';
 import { createPinia } from 'pinia';
 import { MotionPlugin } from '@vueuse/motion'
+import StatusModalPlugin from './modules/shared/services/statusModalService';
 
 
 const pinia = createPinia()
@@ -17,6 +18,7 @@ library.add(fas)
 createApp(App)
     .component('font-awesome-icon', FontAwesomeIcon)
     .use(pinia)
+    .use(StatusModalPlugin)
     .use(router)
     .use(MotionPlugin)
     .mount('#app')
