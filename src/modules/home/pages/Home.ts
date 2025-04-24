@@ -14,74 +14,9 @@ export default defineComponent({
     const { isDark } = useTheme()
     const isLoading = ref(false);
     const titleMotion = ref(null)
-    const cards = [
-      {
-        title: 'Caja',
-        description: 'Administra tus ventas y flujo de caja de manera eficiente.',
-        icon: 'cash-register',
-        iconBg: 'bg-blue-500',
-        route: 'cashier-sales'
-      },
-      {
-        title: 'Usuarios',
-        description: 'Gestiona usuarios, roles y accesos a la plataforma.',
-        icon: 'users',
-        iconBg: 'bg-green-500',
-        route: 'Users'
-      },
-      {
-        title: 'Productos',
-        description: 'Organiza y controla tu catálogo de productos.',
-        icon: 'box-open',
-        iconBg: 'bg-red-500',
-        route: 'Products'
-      },
-      {
-        title: 'Store',
-        description: 'Organiza y controla tus stores.',
-        icon: 'box-open',
-        iconBg: 'bg-brown-500',
-        route: 'Store'
-      },
-      {
-        title: 'Inventarios',
-        description: 'Revisa y actualiza el stock de tus inventarios.',
-        icon: 'warehouse',
-        iconBg: 'bg-yellow-500',
-        route: '/inventarios'
-      },
-      {
-        title: 'Análisis',
-        description: 'Visualiza estadísticas y reportes de pedidos.',
-        icon: 'chart-bar',
-        iconBg: 'bg-purple-500',
-        route: '/analisis'
-      },
-      {
-        title: 'Pedidos',
-        description: 'Visualiza estadísticas y reportes de pedidos.',
-        icon: 'box',
-        iconBg: 'bg-orange-500',
-        route: '/pedidos'
-      },
-      {
-        title: 'Reportes',
-        description: 'Visualiza estadísticas y reportes de pedidos.',
-        icon: 'file',
-        iconBg: 'bg-pink-500',
-        route: '/pedidos'
-      },
-      {
-        title: 'Configuraciones',
-        description: 'Ajusta opciones avanzadas y personaliza tu sistema.',
-        icon: 'cogs',
-        iconBg: 'bg-gray-500',
-        route: '/configuraciones'
-      }
-    ];
 
     const handleCardClick = (name: any) => {
-      console.log('Saludos');
+      console.log('Saludos', name);
       router.push({ name: name });
     };
 
