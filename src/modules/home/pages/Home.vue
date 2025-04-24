@@ -1,99 +1,38 @@
-<script lang="ts" src="./Home.ts" />
-
 <template>
-  <div :class="{ 'dark': isDark }" class="min-h-screen transition-colors duration-300">
-    <div class="relative flex min-h-screen flex-col items-center justify-center p-4 sm:p-8 lg:p-16">
-      <!-- Título animado -->
-      <div ref="titleMotion" class="text-center mb-12">
-        <h1 class="text-4xl sm:text-5xl font-black">
-          <span 
-            class="bg-clip-text text-transparent bg-gradient-to-r"
-            :class="isDark ? 'from-blue-300 via-blue-400 to-indigo-300' : 'from-primary via-blue-600 to-indigo-600'"
-          >
-            Bienvenido a SyntiIQ
-          </span>
-        </h1>
-        <p 
-          class="mt-4 text-lg sm:text-xl max-w-2xl mx-auto"
-          :class="isDark ? 'text-gray-300' : 'text-gray-600'"
-        >
-          Descubre las herramientas que potenciarán tu productividad y creatividad.
-        </p>
-      </div>
+  <div :class="{ 'dark': isDark }" class="min-h-screen">
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 lg:py-24 relative">
 
-      <TransitionGroup
-        tag="div"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 w-full max-w-6xl"
-        name="cards"
-        appear
-      >
-        <CardHome
-          v-for="card in cards"
-          :key="card.title"
-          v-bind="card"
-          :isDark="isDark"
-          @click="handleCardClick(card.route)"
-        />
-      </TransitionGroup>
-    </div>
+      <HeroSection />
+      <FeaturesSection />
+
+      <!-- Decorative elements with reduced visual intensity -->
+      <div v-motion="{
+        initial: { opacity: 0 },
+        enter: {
+          opacity: 0.2,
+          transition: { delay: 800, duration: 800 }
+        }
+      }"
+        class="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-indigo-200 dark:bg-indigo-800/20 filter blur-3xl -z-10"
+        aria-hidden="true"></div>
+
+      <div v-motion="{
+        initial: { opacity: 0 },
+        enter: {
+          opacity: 0.2,
+          transition: { delay: 1000, duration: 800 }
+        }
+      }"
+        class="absolute bottom-1/4 -right-20 w-72 h-72 rounded-full bg-purple-200 dark:bg-purple-800/20 filter blur-3xl -z-10"
+        aria-hidden="true"></div>
+    </main>
   </div>
 </template>
 
+<script setup>
+// Importaciones para FontAwesome 
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import HeroSection from '../components/HeroSection/HeroSection.vue';
+import FeaturesSection from '../components/FeaturesSection/FeaturesSection.vue';
+</script>
 
-
-
-<style>
-@keyframes blob {
-
-  0%,
-  100% {
-    transform: translate(0, 0) scale(1);
-  }
-
-  25% {
-    transform: translate(20px, -20px) scale(1.1);
-  }
-
-  50% {
-    transform: translate(-20px, 20px) scale(0.9);
-  }
-
-  75% {
-    transform: translate(20px, 20px) scale(1.05);
-  }
-}
-
-.animate-card-enter {
-  animation: cardEnter 0.6s ease-out forwards;
-  opacity: 0;
-}
-
-@keyframes cardEnter {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-title {
-  animation: titleEnter 1s ease-out forwards;
-}
-
-@keyframes titleEnter {
-  from {
-    opacity: 0;
-    transform: translateY(-20px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-</style>
