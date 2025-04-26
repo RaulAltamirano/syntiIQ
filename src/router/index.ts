@@ -10,6 +10,7 @@ import LoadingView from '../modules/shared/pages/LoadingView/LoadingView.vue';
 import { setupRouterGuards } from '../modules/auth/guard/setupRouterGuards';
 import { userRoutes } from '../modules/users/router/userRoutes';
 import { checkoutBoxRoutes } from '@/modules/checkoutBox/router/checkoutBoxRoutes';
+import { storeRoutes } from '@/modules/store/router/storeRoutes';
 
 const errorNotFoundRoute: RouteRecordRaw = {
   path: '/:catchAll(.*)*',
@@ -34,6 +35,7 @@ const routes: RouteRecordRaw[] = [
   ...authRoutes,
   ...mainRoutes,
   ...userRoutes,
+  ...storeRoutes,
   ...checkoutBoxRoutes,
   LoadingViewRoute,
   errorNotFoundRoute,
