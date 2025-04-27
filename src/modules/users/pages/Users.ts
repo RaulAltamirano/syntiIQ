@@ -27,7 +27,7 @@ export default defineComponent({
       role: '',
       status: ''
     })
-    
+
     onMounted(() => {
       mounted.value = true
     })
@@ -91,9 +91,9 @@ export default defineComponent({
     const formatDate = (date) => {
       // return format(date, 'MMM d, yyyy')
     }
-    const viewDashboard = (user) => router.push({name: 'UserDashboard'})
+    const viewDashboard = (user) => router.push({ name: 'UserDashboard' })
     const impersonateUser = (user) => console.log('Impersonate:', user.id)
-    const editUser = (user) => console.log('Edit:', user.id)
+    const editUser = (user) => router.push({ name: 'EditUser', params: {id: 'dasd'} })
     const showUserLogs = (user) => console.log('Show logs:', user.id)
     const confirmDelete = (user) => console.log('Delete:', user.id)
 
@@ -134,33 +134,36 @@ export default defineComponent({
         projectCount: Math.floor(Math.random() * 20) + 1, // Random project count (1-20)
       })),
     ]);
-    
+
     function generateRandomName() {
       const firstNames = ['Maria', 'Sofia', 'Camila', 'Isabella', 'Valentina', 'Santiago', 'Mateo', 'Emiliano', 'Sebastian', 'David'];
       const lastNames = ['Lopez', 'Gonzalez', 'Hernandez', 'Garcia', 'Rodriguez'];
       return `${firstNames[Math.floor(Math.random() * firstNames.length)]} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`;
     }
-    
-    function generateRandomEmail()  {
+
+    function generateRandomEmail() {
       const names = generateRandomName().split(' ').join('.');
       return `${names}@example.com`; // Ensure unique emails
     }
-    
+
     function generateRandomRole() {
       const roles = ['admin', 'editor', 'member'];
       return roles[Math.floor(Math.random() * roles.length)];
     }
-    
+
     function generateRandomLastSeenDate() {
       const daysAgo = Math.floor(Math.random() * 30); // Up to 30 days ago
       return new Date(Date.now() - (daysAgo * 24 * 60 * 60 * 1000));
     }
-    
+
     function generateRandomJoinDate() {
       const year = Math.floor(Math.random() * 2) + 2023; // 2023 or 2024
       const month = Math.floor(Math.random() * 12);  // 0-11 (January-December)
       const day = Math.floor(Math.random() * 31) + 1; // 1-31
       return new Date(year, month, day);
+    }
+    const addNewUser = () => {
+      router.push({name: 'AddUser'})
     }
 
 
@@ -173,6 +176,7 @@ export default defineComponent({
       filterRole,
       showAddModal,
       roles,
+      addNewUser,
       filteredUsers,
       viewDashboard,
       impersonateUser,
@@ -183,7 +187,7 @@ export default defineComponent({
       paginationEnd,
       toggleDarkMode,
       filters,
-      
+
       formatLastSeen,
       stats,
       formatDate,
