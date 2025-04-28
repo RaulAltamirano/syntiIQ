@@ -8,29 +8,56 @@ export const userRoutes: RouteRecordRaw[] = [
     meta: { requiresAuth: true },
     children: [
       {
-        path: '/users',
+        path: '', // Ruta base para listar usuarios
         name: 'Users',
         meta: {
           requiresAuth: true,
           roles: ['admin'],
-          title: 'Users'
+          title: 'User List'
         },
-        component: () => import(/* webpackChunkName: "users-module" */ '../../users/pages/Users.vue'),
+        component: () =>
+          import(
+            /* webpackChunkName: "users-list" */ '../../users/pages/Users.vue'
+          ),
       },
       {
         path: 'add',
         name: 'AddUser',
-        component: () => import(/* webpackChunkName: "add-user-module" */ '../pages/FormUser/FormUser.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['admin'],
+          title: 'Add User'
+        },
+        component: () =>
+          import(
+            /* webpackChunkName: "user-add" */ '../pages/FormUser/FormUser.vue'
+          ),
       },
       {
         path: 'edit/:id',
         name: 'EditUser',
-        component: () => import(/* webpackChunkName: "edit-user-module" */ '../pages/FormUser/FormUser.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['admin'],
+          title: 'Edit User'
+        },
+        component: () =>
+          import(
+            /* webpackChunkName: "user-edit" */ '../pages/FormUser/FormUser.vue'
+          ),
       },
       {
         path: 'dashboard/:id',
         name: 'UserDashboard',
-        component: () => import(/* webpackChunkName: "user-dashboard-module" */ '../pages/UserDashboard/UserDashboard.vue'),
+        meta: {
+          requiresAuth: true,
+          roles: ['admin'],
+          title: 'User Dashboard'
+        },
+        component: () =>
+          import(
+            /* webpackChunkName: "user-dashboard" */ '../pages/UserDashboard/UserDashboard.vue'
+          ),
       },
     ],
   },
