@@ -1,18 +1,25 @@
+import { ref, nextTick, onMounted, computed, defineComponent } from "vue";
 import { useTheme } from "@/modules/shared/composables/useTheme";
-import { ref, nextTick, onMounted, computed } from "vue";
 import SearchProduct from "../SearchProduct/SearchProduct.vue";
 import { useCartCashierStore } from "../../stores/useCartStoreCashier";
 import { FontAwesomeIcon } from "@fortawesome/vue-fontawesome";
+import CartItemHeader from "../CarItemHeader/CartItemHeader.vue";
+import { ModalName, useModalStore } from "@/modules/shared/store/useModalStore";
+import ShareCartModal from "../ShareCartModal/ShareCartModal.vue";
 
-export default {
+
+export default defineComponent({
     name: 'HeaderCar',
     components: {
         SearchProduct,
         FontAwesomeIcon,
+        CartItemHeader,
+        ShareCartModal,
     },
     setup() {
         const isDark = useTheme()
         const cartStore = useCartCashierStore();
+        const modal = useModalStore()
 
         // Refs
         const editInput = ref<HTMLInputElement | null>(null);
@@ -132,25 +139,39 @@ export default {
             });
         });
 
-        const getCartItemClasses= (index)=> {
+        const getCartItemClasses = (index) => {
             const isActive = currentCartIndex === index;
             return isActive
-              ? isDark
-                ? 'bg-blue-700 text-gray-100 shadow-md shadow-blue-900/40'
-                : 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-              : isDark
-                ? 'bg-gray-800 hover:bg-gray-750 text-gray-300 hover:text-gray-200 shadow shadow-gray-900/20'
-                : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 shadow shadow-gray-300/30';
-          }
-          const getInputClasses= ()=> {
+                ? isDark
+                    ? 'bg-blue-700 text-gray-100 shadow-md shadow-blue-900/40'
+                    : 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
+                : isDark
+                    ? 'bg-gray-800 hover:bg-gray-750 text-gray-300 hover:text-gray-200 shadow shadow-gray-900/20'
+                    : 'bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 shadow shadow-gray-300/30';
+        }
+        const getInputClasses = () => {
             return isDark
-              ? 'bg-gray-800 border-gray-700 focus:border-blue-600 focus:ring-blue-700/30 text-white'
-              : 'bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/30 text-gray-800';
-          }
-        
-          const handleRightClick= (index)=> {
+                ? 'bg-gray-800 border-gray-700 focus:border-blue-600 focus:ring-blue-700/30 text-white'
+                : 'bg-white border-gray-300 focus:border-blue-500 focus:ring-blue-500/30 text-gray-800';
+        }
+
+        const handleRightClick = (index) => {
             cartStore.toggleDropdown(index)
         }
+
+
+        const shareCartModal = ref<any | null>(null);
+
+        const currentCartItems = ref([
+            { id: 1, name: 'Producto 1', price: 25.99, quantity: 2 },
+            { id: 2, name: 'Producto 2', price: 15.50, quantity: 1 },
+            { id: 3, name: 'Producto 3', price: 10.00, quantity: 3 }
+        ]);
+
+        const openShareModal = () => {
+            modal.open(ModalName.SHARE_CART)
+        };
+
         return {
             cartStore,
             editInput,
@@ -158,6 +179,7 @@ export default {
             dragOverItem,
             carts,
             currentCartIndex,
+            modal,
             isPriceCheckerActive,
             showPriceChecker,
             selectedProduct,
@@ -169,10 +191,13 @@ export default {
             isDark,
             onDrop,
             getCartIcon,
+            openShareModal,
+            currentCartItems,
             startEditing,
             finishEditing,
+            shareCartModal,
             handleRightClick,
         };
     }
-}
+})
 
